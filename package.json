@@ -1,0 +1,62 @@
+{
+  "name": "test-automation-framework",
+  "version": "1.0.0",
+  "description": "Playwright + Cucumber BDD test automation framework covering functional (UI/API) and non-functional (accessibility/performance) testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --project=functional:ui",
+    "test:api": "npx playwright test --project=functional:api",
+    "test:accessibility": "npx playwright test --project=non-functional:accessibility",
+    "test:performance": "npx playwright test --project=non-functional:performance",
+    "test:functional": "npx playwright test --project=functional:ui --project=functional:api",
+    "test:non-functional": "npx playwright test --project=non-functional:accessibility --project=non-functional:performance",
+    "test:bdd": "npx cucumber-js --config cucumber.config.js",
+    "test:bdd:ui": "npx cucumber-js --config cucumber.config.js --profile ui",
+    "test:bdd:api": "npx cucumber-js --config cucumber.config.js --profile api",
+    "test:bdd:smoke": "npx cucumber-js --config cucumber.config.js --profile smoke",
+    "test:bdd:regression": "npx cucumber-js --config cucumber.config.js --profile regression",
+    "report:open": "npx playwright show-report reports/html",
+    "report:allure:generate": "npx allure generate reports/allure-results --clean -o reports/allure-report",
+    "report:allure:open": "npx allure open reports/allure-report",
+    "report:allure": "npm run report:allure:generate && npm run report:allure:open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stompercito/test-automation-framework.git"
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "bdd",
+    "gherkin",
+    "test-automation",
+    "page-object-model",
+    "functional-testing",
+    "non-functional-testing",
+    "accessibility",
+    "performance"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/stompercito/test-automation-framework/issues"
+  },
+  "homepage": "https://github.com/stompercito/test-automation-framework#readme",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
+    "@cucumber/html-formatter": "^23.0.0",
+    "@cucumber/pretty-formatter": "^3.2.0",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0",
+    "allure-commandline": "^2.38.1",
+    "allure-cucumberjs": "^3.6.0",
+    "allure-playwright": "^3.6.0",
+    "axios": "^1.13.6",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
