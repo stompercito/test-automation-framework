@@ -1,4 +1,4 @@
-@non-functional @performance @regression
+@non-functional @performance @regression @v3
 Feature: Page Performance
   As a product owner
   I want the application pages to load within acceptable time limits

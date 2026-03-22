@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npx playwright test",
     "test:ui": "npx playwright test --project=functional:ui",
+    "test:ui:headed": "cross-env HEADLESS=false PW_VIDEO_MODE=on npx playwright test --project=functional:ui",
     "test:api": "npx playwright test --project=functional:api",
     "test:accessibility": "npx playwright test --project=non-functional:accessibility",
     "test:performance": "npx playwright test --project=non-functional:performance",

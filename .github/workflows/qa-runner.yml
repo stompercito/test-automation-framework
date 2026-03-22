@@ -1,0 +1,128 @@
+name: QA Runner
+
+run-name: >-
+  QA | suite=${{ inputs.suite || 'all' }} | version=${{ inputs.shoptest_version || '3' }} | actor=${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Test category
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - functional
+          - non-functional
+      shoptest_version:
+        description: ShopTest version used by UI-driven suites
+        required: true
+        type: choice
+        default: '3'
+        options:
+          - '1'
+          - '2'
+          - '3'
+      base_url:
+        description: Optional base URL for UI/non-functional suites
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  functional:
+    name: Functional Tests
+    if: ${{ inputs.suite == 'all' || inputs.suite == 'functional' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: Run functional projects
+        env:
+          BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || 'https://stompercito.github.io/web-application-for-automation/' }}
+          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          HEADLESS: 'true'
+          PW_VIDEO_MODE: 'retain-on-failure'
+          CI: true
+        run: npm run test:functional
+
+      - name: Upload functional Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-playwright-report
+          path: reports/playwright-html
+          retention-days: 14
+
+      - name: Upload functional Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-allure-results
+          path: reports/allure-results
+          retention-days: 14
+
+  non_functional:
+    name: Non-Functional Tests
+    if: ${{ inputs.suite == 'all' || inputs.suite == 'non-functional' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: Run non-functional projects
+        env:
+          BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || 'https://stompercito.github.io/web-application-for-automation/' }}
+          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          HEADLESS: 'true'
+          PW_VIDEO_MODE: 'retain-on-failure'
+          CI: true
+        run: npm run test:non-functional
+
+      - name: Upload non-functional Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: non-functional-playwright-report
+          path: reports/playwright-html
+          retention-days: 14
+
+      - name: Upload non-functional Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: non-functional-allure-results
+          path: reports/allure-results
+          retention-days: 14

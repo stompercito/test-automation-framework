@@ -1,6 +1,7 @@
 /** @type {import('@cucumber/cucumber').IProfiles} */
 const sharedOptions = {
   require: [
+    'shared/applications/**/*.ts',
     'src/functional/ui/steps/**/*.ts',
     'src/functional/api/steps/**/*.ts',
     'src/non-functional/accessibility/steps/**/*.ts',

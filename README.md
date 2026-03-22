@@ -25,31 +25,31 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 ## Architecture Overview
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                  test-automation-framework                   │
-│                                                              │
-│  ┌───────────────────────┐  ┌──────────────────────────────┐ │
-│  │    FUNCTIONAL          │  │    NON-FUNCTIONAL            │ │
-│  │  ┌────────┐ ┌───────┐  │  │  ┌───────────┐ ┌──────────┐ │ │
-│  │  │  UI    │ │  API  │  │  │  │Accessibility│ │Performance│ │ │
-│  │  │ (POM)  │ │(Client│  │  │  │ (WCAG 2.1)│ │(Nav Timing│ │ │
-│  │  └────────┘ └───────┘  │  │  └───────────┘ └──────────┘ │ │
-│  └───────────────────────┘  └──────────────────────────────┘ │
-│                                                              │
-│  ┌────────────────────────────────────────────────────────┐  │
-│  │                     SHARED LAYER                        │  │
-│  │   config  │  fixtures/world  │  fixtures/hooks  │ utils │  │
-│  └────────────────────────────────────────────────────────┘  │
-│                                                              │
-│  ┌──────────────────┐  ┌─────────────────────────────────┐  │
-│  │  Playwright Test │  │  Cucumber (Gherkin / BDD)        │  │
-│  │  (native .spec)  │  │  (.feature + step definitions)  │  │
-│  └──────────────────┘  └─────────────────────────────────┘  │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐    │
-│  │             Reports (HTML dashboard + Allure)        │    │
-│  └──────────────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────────────┘
++--------------------------------------------------------------+
+|                  test-automation-framework                   |
+|                                                              |
+|  +-----------------------+  +------------------------------+ |
+|  |    FUNCTIONAL          |  |    NON-FUNCTIONAL            | |
+|  |  +--------+ +-------+  |  |  +-----------+ +----------+ | |
+|  |  |  UI    | |  API  |  |  |  |Accessibility| |Performance| | |
+|  |  | (POM)  | |(Client|  |  |  | (WCAG 2.1)| |(Nav Timing| | |
+|  |  +--------+ +-------+  |  |  +-----------+ +----------+ | |
+|  +-----------------------+  +------------------------------+ |
+|                                                              |
+|  +--------------------------------------------------------+  |
+|  |                     SHARED LAYER                        |  |
+|  |   config  |  fixtures/world  |  fixtures/hooks  | utils |  |
+|  +--------------------------------------------------------+  |
+|                                                              |
+|  +------------------+  +---------------------------------+  |
+|  |  Playwright Test |  |  Cucumber (Gherkin / BDD)        |  |
+|  |  (native .spec)  |  |  (.feature + step definitions)  |  |
+|  +------------------+  +---------------------------------+  |
+|                                                              |
+|  +------------------------------------------------------+    |
+|  |             Reports (HTML dashboard + Allure)        |    |
+|  +------------------------------------------------------+    |
++--------------------------------------------------------------+
 ```
 
 ---
@@ -58,57 +58,57 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 
 ```
 test-automation-framework/
-├── src/
-│   ├── functional/
-│   │   ├── ui/
-│   │   │   ├── pages/           # Page Object Model classes
-│   │   │   │   ├── base.page.ts
-│   │   │   │   ├── login.page.ts
-│   │   │   │   └── dashboard.page.ts
-│   │   │   ├── features/        # Gherkin feature files (UI)
-│   │   │   │   └── authentication.feature
-│   │   │   ├── steps/           # Cucumber step definitions (UI)
-│   │   │   │   └── authentication.steps.ts
-│   │   │   └── ui.spec.ts       # Playwright-native UI spec
-│   │   └── api/
-│   │       ├── clients/         # API client classes
-│   │       │   └── posts.client.ts
-│   │       ├── features/        # Gherkin feature files (API)
-│   │       │   └── posts.feature
-│   │       ├── steps/           # Cucumber step definitions (API)
-│   │       │   └── posts.steps.ts
-│   │       └── api.spec.ts      # Playwright-native API spec
-│   └── non-functional/
-│       ├── accessibility/
-│       │   ├── features/        # Gherkin feature files (a11y)
-│       │   │   └── accessibility.feature
-│       │   ├── steps/
-│       │   │   └── accessibility.steps.ts
-│       │   └── accessibility.spec.ts
-│       └── performance/
-│           ├── features/        # Gherkin feature files (perf)
-│           │   └── performance.feature
-│           ├── steps/
-│           │   └── performance.steps.ts
-│           └── performance.spec.ts
-├── shared/
-│   ├── config/
-│   │   ├── config.ts            # Central environment configuration
-│   │   └── tags.ts              # BDD tag constants
-│   ├── fixtures/
-│   │   ├── world.ts             # Cucumber CustomWorld (shared context)
-│   │   └── hooks.ts             # Before/After lifecycle hooks
-│   └── utils/
-│       ├── api-client.ts        # Abstract API client base class
-│       └── helpers.ts           # Miscellaneous utilities
-├── reports/                     # Generated reports (git-ignored)
-│   ├── html/
-│   └── allure-results/
-├── playwright.config.ts         # Playwright multi-project config
-├── cucumber.config.ts           # Cucumber / BDD config
-├── tsconfig.json
-├── .env.example                 # Environment variable template
-└── package.json
++-- src/
+|   +-- functional/
+|   |   +-- ui/
+|   |   |   +-- pages/           # Page Object Model classes
+|   |   |   |   +-- base.page.ts
+|   |   |   |   +-- login.page.ts
+|   |   |   |   +-- dashboard.page.ts
+|   |   |   +-- features/        # Gherkin feature files (UI)
+|   |   |   |   +-- authentication.feature
+|   |   |   +-- steps/           # Cucumber step definitions (UI)
+|   |   |   |   +-- authentication.steps.ts
+|   |   |   +-- ui.spec.ts       # Playwright-native UI spec
+|   |   +-- api/
+|   |       +-- clients/         # API client classes
+|   |       |   +-- posts.client.ts
+|   |       +-- features/        # Gherkin feature files (API)
+|   |       |   +-- posts.feature
+|   |       +-- steps/           # Cucumber step definitions (API)
+|   |       |   +-- posts.steps.ts
+|   |       +-- api.spec.ts      # Playwright-native API spec
+|   +-- non-functional/
+|       +-- accessibility/
+|       |   +-- features/        # Gherkin feature files (a11y)
+|       |   |   +-- accessibility.feature
+|       |   +-- steps/
+|       |   |   +-- accessibility.steps.ts
+|       |   +-- accessibility.spec.ts
+|       +-- performance/
+|           +-- features/        # Gherkin feature files (perf)
+|           |   +-- performance.feature
+|           +-- steps/
+|           |   +-- performance.steps.ts
+|           +-- performance.spec.ts
++-- shared/
+|   +-- config/
+|   |   +-- config.ts            # Central environment configuration
+|   |   +-- tags.ts              # BDD tag constants
+|   +-- fixtures/
+|   |   +-- world.ts             # Cucumber CustomWorld (shared context)
+|   |   +-- hooks.ts             # Before/After lifecycle hooks
+|   +-- utils/
+|       +-- api-client.ts        # Abstract API client base class
+|       +-- helpers.ts           # Miscellaneous utilities
++-- reports/                     # Generated reports (git-ignored)
+|   +-- html/
+|   +-- allure-results/
++-- playwright.config.ts         # Playwright multi-project config
++-- cucumber.config.ts           # Cucumber / BDD config
++-- tsconfig.json
++-- .env.example                 # Environment variable template
++-- package.json
 ```
 
 ---
@@ -141,10 +141,10 @@ npm test
 | Command | Description |
 |---|---|
 | `npm test` | Run ALL Playwright tests across all projects |
-| `npm run test:ui` | Functional – UI tests only |
-| `npm run test:api` | Functional – API tests only |
-| `npm run test:accessibility` | Non-functional – Accessibility tests |
-| `npm run test:performance` | Non-functional – Performance tests |
+| `npm run test:ui` | Functional - UI tests only |
+| `npm run test:api` | Functional - API tests only |
+| `npm run test:accessibility` | Non-functional - Accessibility tests |
+| `npm run test:performance` | Non-functional - Performance tests |
 | `npm run test:functional` | UI + API tests combined |
 | `npm run test:non-functional` | Accessibility + Performance combined |
 | `npm run test:bdd` | Run ALL BDD (Gherkin) scenarios via Cucumber |
@@ -176,9 +176,23 @@ Allure provides a rich, interactive dashboard with trend charts, categories, and
 npm run report:allure
 
 # Or step by step:
-npm run report:allure:generate   # process raw results → HTML site
+npm run report:allure:generate   # process raw results ? HTML site
 npm run report:allure:open       # open the site in the browser
 ```
+
+### GitHub QA Dashboard (Framework UI)
+
+This framework now includes a lightweight QA dashboard UI in `dashboard/` plus workflow automation in `.github/workflows/`.
+
+- `qa-runner.yml`: `workflow_dispatch` runner for `functional`, `non-functional`, or `all` suites
+- `deploy-dashboard.yml`: deploys the dashboard to GitHub Pages
+
+From the dashboard you can:
+
+- Launch runs with optional inputs (`base_url`, `shoptest_version`)
+- Watch run/job progress by category
+- Download run artifacts (Playwright report + Allure results)
+- Add quick triage labels and notes per failed job (stored in browser local storage)
 
 ---
 
@@ -278,6 +292,7 @@ All configuration is centralised in `shared/config/config.ts` and driven by envi
 | `NAVIGATION_TIMEOUT` | `60000` | Page navigation timeout (ms) |
 | `MAX_LOAD_TIME_MS` | `5000` | Performance test load time budget |
 | `MAX_LCP_MS` | `2500` | LCP budget for performance tests |
+| `SHOPTEST_VERSION` | `3` | Version selector used by ShopTest UI/non-functional suites |
 
 ---
 
@@ -337,7 +352,7 @@ This section justifies every architectural decision with references to the **IST
 ### 4. API Hooks for Test Prerequisites
 
 **ISTQB TAE** advises minimising the scope of each test to reduce flakiness. UI interactions are slower and more brittle than API calls. Using `ApiClient` hooks to seed data means:
-- Setup is ~10–50× faster than clicking through a UI flow.
+- Setup is ~10-50x faster than clicking through a UI flow.
 - UI tests focus on UI behaviour, not data setup.
 - Failures are isolated to the scenario under test, not setup steps.
 
@@ -351,7 +366,7 @@ This section justifies every architectural decision with references to the **IST
 ### 6. Playwright as the Core Engine
 
 Playwright was chosen over Selenium and Cypress because:
-- **Multi-browser support** (Chromium, Firefox, WebKit) out of the box – aligns with ISTQB FL risk-based test approach (cover more browsers).
+- **Multi-browser support** (Chromium, Firefox, WebKit) out of the box - aligns with ISTQB FL risk-based test approach (cover more browsers).
 - **Trace viewer, screenshots, video** on failure aid ISTQB FL 5.4 defect reporting.
 - **Native API request context** enables hybrid UI/API tests without extra dependencies.
 - **Auto-waiting** reduces flaky tests caused by timing issues (ISTQB TAE reliability principle).
@@ -359,22 +374,22 @@ Playwright was chosen over Selenium and Cypress because:
 ### 7. Dual Runners: Playwright Native + Cucumber
 
 The framework supports both:
-- **Playwright `.spec.ts` files** – for developers who prefer code-first, fast feedback loops.
-- **Cucumber `.feature` files** – for BDD collaboration with non-technical stakeholders.
+- **Playwright `.spec.ts` files** - for developers who prefer code-first, fast feedback loops.
+- **Cucumber `.feature` files** - for BDD collaboration with non-technical stakeholders.
 
 Both runners share the same Page Objects and API clients, so there is no duplication.
 
 ### 8. Allure + Playwright HTML Reports
 
 **ISTQB FL 5.3** requires test progress and results to be communicated effectively. Two report formats are provided:
-- **Playwright HTML report** – detailed per-test traces, screenshots, and timeline.
-- **Allure report** – executive-level dashboard with trend history, categories (broken vs failed), and retry statistics useful for release decisions.
+- **Playwright HTML report** - detailed per-test traces, screenshots, and timeline.
+- **Allure report** - executive-level dashboard with trend history, categories (broken vs failed), and retry statistics useful for release decisions.
 
 ### 9. Non-Functional Testing built-in
 
 **ISTQB FL 2.3** defines non-functional testing as testing "how well" a system behaves. Most frameworks bolt this on as an afterthought. This framework treats it as a first-class citizen:
-- **Accessibility** – WCAG 2.1 AA compliance (legal requirement in many jurisdictions).
-- **Performance** – Navigation Timing API metrics with configurable budgets, ensuring CI gates on load time regressions.
+- **Accessibility** - WCAG 2.1 AA compliance (legal requirement in many jurisdictions).
+- **Performance** - Navigation Timing API metrics with configurable budgets, ensuring CI gates on load time regressions.
 
 ### 10. TypeScript Throughout
 
@@ -400,3 +415,4 @@ The framework is designed to grow with the product:
 | Load testing | Add a `src/non-functional/load/` project using k6 or Artillery |
 | Contract testing | Add Pact.js under `src/functional/api/contracts/` |
 | Parallel execution | Increase `workers` in `playwright.config.ts`; Cucumber supports `--parallel N` |
+

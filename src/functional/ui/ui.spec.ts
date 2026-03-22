@@ -1,45 +1,59 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/login.page';
-import { DashboardPage } from './pages/dashboard.page';
-import { config } from '../../../shared/config/config';
+import { ShopTestHomePage } from '../../../shared/pages/shoptest-home.page';
+import { ShopTestCartPage } from '../../../shared/pages/shoptest-cart.page';
 
 /**
- * Functional › UI tests – Playwright native spec.
- *
- * These tests exercise the UI layer using the Page Object Model.
- * They are intentionally small, focused, and use the API fixtures
- * in beforeEach to seed test data quickly (no UI setup steps).
- *
- * Run with: npm run test:ui
+ * Functional > UI tests aligned to the ShopTest demo application.
+ * Version can be overridden by setting SHOPTEST_VERSION.
  */
 
-test.describe('User Authentication', () => {
-  let loginPage: LoginPage;
+const SHOPTEST_VERSION = (Number(process.env.SHOPTEST_VERSION ?? 3) || 3) as 1 | 2 | 3;
+
+test.describe('ShopTest catalog', () => {
+  let homePage: ShopTestHomePage;
 
   test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    await loginPage.goto();
+    homePage = new ShopTestHomePage(page);
+    await homePage.goto(SHOPTEST_VERSION);
   });
 
-  test('should display the login form', async ({ page }) => {
-    await expect(loginPage.usernameInput).toBeVisible();
-    await expect(loginPage.passwordInput).toBeVisible();
-    await expect(loginPage.submitButton).toBeVisible();
+  test('shows the catalog landing experience', async () => {
+    await expect(homePage.heroHeading).toBeVisible();
+    await expect(homePage.searchInput).toBeVisible();
+    await expect(homePage.resultCount).toContainText('8 products found');
   });
 
-  test('page title is reachable', async ({ page }) => {
-    // Verify we reached a real page (not a 404)
-    await expect(page).not.toHaveTitle('404');
+  test('filters products by search term', async () => {
+    await homePage.search('Headphones');
+
+    await expect(homePage.resultCount).toContainText('1 product found');
+    await expect(homePage.productCard('Wireless Headphones')).toBeVisible();
   });
 });
 
-test.describe('Navigation', () => {
-  test('home page loads without errors', async ({ page }) => {
-    await page.goto('/');
-    // No uncaught errors thrown in the console
-    const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
-    await page.waitForLoadState('domcontentloaded');
-    expect(errors).toHaveLength(0);
+test.describe('ShopTest cart flow', () => {
+  test('adds a product to the cart from the catalog', async ({ page }) => {
+    const homePage = new ShopTestHomePage(page);
+    const cartPage = new ShopTestCartPage(page);
+
+    await homePage.goto(SHOPTEST_VERSION);
+    await homePage.addToCartButton('Wireless Headphones').click();
+
+    await expect(homePage.cartBadge).toHaveText('1');
+    await homePage.cartButton.click();
+
+    await expect(cartPage.heading).toBeVisible();
+    await expect(cartPage.cartItem('Wireless Headphones')).toBeVisible();
+    await expect(cartPage.checkoutLink).toBeVisible();
+  });
+
+  test('opens the product details page', async ({ page }) => {
+    const homePage = new ShopTestHomePage(page);
+
+    await homePage.goto(SHOPTEST_VERSION);
+    await homePage.detailsLink('Wireless Headphones').click();
+
+    await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
+    await expect(page.getByText(/premium wireless headphones/i)).toBeVisible();
   });
 });

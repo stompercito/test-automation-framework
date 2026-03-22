@@ -1,26 +1,17 @@
-import { Before, After, BeforeAll, AfterAll } from '@cucumber/cucumber';
+import { After, AfterAll, Before, BeforeAll } from '@cucumber/cucumber';
 import { chromium, request } from '@playwright/test';
-import { CustomWorld } from './world';
 import { config } from '../config/config';
-
-/**
- * Global lifecycle hooks shared across all BDD scenarios.
- *
- * Before each scenario  → launch browser + open a fresh context/page + API ctx
- * After each scenario   → capture screenshot on failure, close browser + API ctx
- */
+import { CustomWorld } from './world';
 
 BeforeAll(async function () {
-  // Nothing global needed – each scenario manages its own browser instance
+  // Scenario-scoped resources are enough for this framework.
 });
 
 AfterAll(async function () {
-  // Nothing global needed
+  // Nothing global to tear down.
 });
 
 Before(async function (this: CustomWorld) {
-  // Launch browser for UI scenarios; API-only scenarios still get a browser
-  // but never navigate, so the overhead is minimal.
   this.browser = await chromium.launch({
     headless: config.browser.headless,
     slowMo: config.browser.slowMo,
@@ -32,10 +23,8 @@ Before(async function (this: CustomWorld) {
   });
 
   this.page = await this.context.newPage();
-
-  // Standalone API request context (no cookie jar shared with browser)
   this.apiContext = await request.newContext({
-    baseURL: config.apiBaseUrl,
+    baseURL: config.apiBaseUrl === 'mock:shoptest' ? undefined : config.apiBaseUrl,
     extraHTTPHeaders: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -44,8 +33,7 @@ Before(async function (this: CustomWorld) {
 });
 
 After(async function (this: CustomWorld, scenario) {
-  // Attach a screenshot to the Cucumber report on failure
-  if (scenario.result?.status === 'FAILED') {
+  if (scenario.result?.status === 'FAILED' && this.page) {
     const screenshot = await this.page.screenshot({ fullPage: true });
     await this.attach(screenshot, 'image/png');
   }
@@ -55,6 +43,5 @@ After(async function (this: CustomWorld, scenario) {
   await this.browser?.close();
   await this.apiContext?.dispose();
 
-  // Reset data bag
   this.data = {};
 });
