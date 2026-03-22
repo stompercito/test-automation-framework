@@ -141,7 +141,12 @@ npm test
 | Command | Description |
 |---|---|
 | `npm test` | Run ALL Playwright tests across all projects |
+| `npm run qa:local` | Open Playwright UI mode with environment defaults from `.env` |
+| `npm run qa:local:v1` | Open Playwright UI mode forcing `SHOPTEST_VERSION=1` |
+| `npm run qa:local:v2` | Open Playwright UI mode forcing `SHOPTEST_VERSION=2` |
+| `npm run qa:local:v3` | Open Playwright UI mode forcing `SHOPTEST_VERSION=3` |
 | `npm run test:ui` | Functional - UI tests only |
+| `npm run test:ui:headed` | Functional - UI tests in headed browser mode (local visibility) |
 | `npm run test:api` | Functional - API tests only |
 | `npm run test:accessibility` | Non-functional - Accessibility tests |
 | `npm run test:performance` | Non-functional - Performance tests |
@@ -159,7 +164,7 @@ npm test
 
 ### Playwright HTML Report (built-in)
 
-After any test run the HTML report is written to `reports/html/`. Open it with:
+After any test run the HTML report is written to `reports/playwright-html/`. Open it with:
 
 ```bash
 npm run report:open
@@ -281,12 +286,13 @@ All configuration is centralised in `shared/config/config.ts` and driven by envi
 
 | Variable | Default | Description |
 |---|---|---|
-| `BASE_URL` | `https://example.com` | Web application URL |
-| `API_BASE_URL` | `https://jsonplaceholder.typicode.com` | API base URL |
+| `BASE_URL` | `https://stompercito.github.io/web-application-for-automation/` | Web application URL |
+| `API_BASE_URL` | `mock:shoptest` | API base URL |
 | `TEST_USERNAME` | `test_user` | Default test user |
 | `TEST_PASSWORD` | `test_password` | Default test password |
 | `ENVIRONMENT` | `local` | `local` / `staging` / `production` |
 | `HEADLESS` | `true` | Run browser headlessly |
+| `PW_VIDEO_MODE` | `retain-on-failure` | Playwright video capture mode |
 | `SLOW_MO` | `0` | Milliseconds between Playwright actions |
 | `DEFAULT_TIMEOUT` | `30000` | Default action timeout (ms) |
 | `NAVIGATION_TIMEOUT` | `60000` | Page navigation timeout (ms) |

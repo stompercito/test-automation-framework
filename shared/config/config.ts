@@ -6,7 +6,7 @@ import { LOCAL_SHOPTEST_URL, PUBLISHED_SHOPTEST_URL } from '../utils/shoptest-ta
  * App-specific behavior should stay outside this file.
  */
 export const config = {
-  baseUrl: process.env.BASE_URL ?? LOCAL_SHOPTEST_URL,
+  baseUrl: process.env.BASE_URL ?? PUBLISHED_SHOPTEST_URL,
   publishedBaseUrl: PUBLISHED_SHOPTEST_URL,
   apiBaseUrl: process.env.API_BASE_URL ?? 'mock:shoptest',
 

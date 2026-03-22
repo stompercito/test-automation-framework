@@ -5,6 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test",
+    "qa:local": "npx playwright test --ui",
+    "qa:local:v1": "cross-env SHOPTEST_VERSION=1 npx playwright test --ui",
+    "qa:local:v2": "cross-env SHOPTEST_VERSION=2 npx playwright test --ui",
+    "qa:local:v3": "cross-env SHOPTEST_VERSION=3 npx playwright test --ui",
     "test:ui": "npx playwright test --project=functional:ui",
     "test:ui:headed": "cross-env HEADLESS=false PW_VIDEO_MODE=on npx playwright test --project=functional:ui",
     "test:api": "npx playwright test --project=functional:api",
@@ -17,7 +21,7 @@
     "test:bdd:api": "npx cucumber-js --config cucumber.config.js --profile api",
     "test:bdd:smoke": "npx cucumber-js --config cucumber.config.js --profile smoke",
     "test:bdd:regression": "npx cucumber-js --config cucumber.config.js --profile regression",
-    "report:open": "npx playwright show-report reports/html",
+    "report:open": "npx playwright show-report reports/playwright-html",
     "report:allure:generate": "npx allure generate reports/allure-results --clean -o reports/allure-report",
     "report:allure:open": "npx allure open reports/allure-report",
     "report:allure": "npm run report:allure:generate && npm run report:allure:open"

@@ -1,18 +1,20 @@
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
+import { config } from './shared/config/config';
 import {
   HAS_LOCAL_SHOPTEST_REPO,
   LOCAL_SHOPTEST_REPO_PATH,
   LOCAL_SHOPTEST_URL,
 } from './shared/utils/shoptest-target';
 
-const isHeadless = process.env.HEADLESS !== 'false';
+const isHeadless = config.browser.headless;
 const videoMode =
   process.env.PW_VIDEO_MODE === 'on' ||
   process.env.PW_VIDEO_MODE === 'off' ||
   process.env.PW_VIDEO_MODE === 'retain-on-failure' ||
   process.env.PW_VIDEO_MODE === 'on-first-retry'
     ? process.env.PW_VIDEO_MODE
-    : 'on-first-retry';
+    : 'retain-on-failure';
 
 export default defineConfig({
   testDir: './src',
@@ -25,14 +27,14 @@ export default defineConfig({
     ['allure-playwright', { resultsDir: 'reports/allure-results' }],
   ],
   use: {
-    baseURL: process.env.BASE_URL ?? LOCAL_SHOPTEST_URL,
+    baseURL: config.baseUrl,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: videoMode,
     headless: isHeadless,
   },
   webServer:
-    !process.env.BASE_URL && HAS_LOCAL_SHOPTEST_REPO
+    config.baseUrl === LOCAL_SHOPTEST_URL && HAS_LOCAL_SHOPTEST_REPO
       ? {
           command: 'npm run dev -- --host 127.0.0.1 --port 4173',
           cwd: LOCAL_SHOPTEST_REPO_PATH,

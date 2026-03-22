@@ -3,6 +3,7 @@ dist/
 reports/allure-results/
 reports/allure-report/
 reports/html/
+reports/playwright-html/
 .env
 *.log
 playwright-report/
