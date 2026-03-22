@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { ShopTestHomePage } from '../../../shared/pages/shoptest-home.page';
 import { ShopTestCartPage } from '../../../shared/pages/shoptest-cart.page';
+import { ShopTestCheckoutPage } from '../../../shared/pages/shoptest-checkout.page';
 
 /**
  * Functional > UI tests aligned to the ShopTest demo application.
@@ -55,5 +56,39 @@ test.describe('ShopTest cart flow', () => {
 
     await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
     await expect(page.getByText(/premium wireless headphones/i)).toBeVisible();
+  });
+
+  test('opens checkout page from cart and shows required fields', async ({ page }) => {
+    const homePage = new ShopTestHomePage(page);
+    const cartPage = new ShopTestCartPage(page);
+    const checkoutPage = new ShopTestCheckoutPage(page);
+
+    await homePage.goto(SHOPTEST_VERSION);
+    await homePage.addToCartButton('Wireless Headphones').click();
+    await homePage.cartButton.click();
+    await cartPage.checkoutLink.click();
+
+    await expect(checkoutPage.heading).toBeVisible();
+    await expect(checkoutPage.nameInput).toBeVisible();
+    await expect(checkoutPage.emailInput).toBeVisible();
+    await expect(checkoutPage.addressInput).toBeVisible();
+    await expect(checkoutPage.cardInput).toBeVisible();
+    await expect(checkoutPage.placeOrderButton).toBeVisible();
+  });
+
+  test('submits checkout and reaches an order result state', async ({ page }) => {
+    const homePage = new ShopTestHomePage(page);
+    const cartPage = new ShopTestCartPage(page);
+    const checkoutPage = new ShopTestCheckoutPage(page);
+
+    await homePage.goto(SHOPTEST_VERSION);
+    await homePage.addToCartButton('Wireless Headphones').click();
+    await homePage.cartButton.click();
+    await cartPage.checkoutLink.click();
+
+    await checkoutPage.fillRequiredCheckoutData();
+    await checkoutPage.placeOrderButton.click();
+
+    await expect(page.getByText(/order placed successfully|order failed/i)).toBeVisible();
   });
 });
