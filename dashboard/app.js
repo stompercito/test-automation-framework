@@ -29,6 +29,7 @@ let currentArtifacts = [];
 let autoTimer = null;
 
 const launchBtn = document.getElementById('launchBtn');
+const launchGithubBtn = document.getElementById('launchGithubBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 const autoRefresh = document.getElementById('autoRefresh');
 const statusMessage = document.getElementById('statusMessage');
@@ -64,15 +65,24 @@ function saveTriage(next) {
 }
 
 function headers() {
-  return {
+  const baseHeaders = {
     Accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${settings.token}`,
     'X-GitHub-Api-Version': '2022-11-28',
   };
+
+  if (settings.token) {
+    baseHeaders.Authorization = `Bearer ${settings.token}`;
+  }
+
+  return baseHeaders;
+}
+
+function canRead() {
+  return Boolean(settings.owner && settings.repo && settings.workflow);
 }
 
 function canRun() {
-  return Boolean(settings.token && settings.owner && settings.repo && settings.workflow);
+  return Boolean(settings.token && canRead());
 }
 
 function notify(text) {
@@ -112,15 +122,19 @@ function renderSettings() {
   const grid = document.getElementById('settingsGrid');
   grid.innerHTML = '';
 
-  grid.appendChild(field('GitHub Token (PAT)', 'token', 'password'));
+  grid.appendChild(field('GitHub Token (PAT) - optional for read-only', 'token', 'password'));
   grid.appendChild(field('Owner', 'owner'));
   grid.appendChild(field('Repository', 'repo'));
   grid.appendChild(field('Workflow file', 'workflow'));
   grid.appendChild(field('Branch', 'branch'));
   grid.appendChild(field('Suite', 'suite', 'select', [
     { value: 'all', label: 'All' },
-    { value: 'functional', label: 'Functional' },
-    { value: 'non-functional', label: 'Non-Functional' },
+    { value: 'functional', label: 'Functional (UI + API)' },
+    { value: 'non-functional', label: 'Non-Functional (Accessibility + Performance)' },
+    { value: 'ui', label: 'UI only' },
+    { value: 'api', label: 'API only' },
+    { value: 'accessibility', label: 'Accessibility only' },
+    { value: 'performance', label: 'Performance only' },
   ]));
   grid.appendChild(field('ShopTest version', 'shoptest_version', 'select', [
     { value: '1', label: 'V1' },
@@ -143,6 +157,7 @@ function formatDate(value) {
 
 function wireButtons() {
   launchBtn.addEventListener('click', launchRun);
+  launchGithubBtn.addEventListener('click', openWorkflowInGitHub);
   refreshBtn.addEventListener('click', refreshEverything);
   autoRefresh.addEventListener('change', () => {
     if (autoRefresh.checked) {
@@ -154,9 +169,20 @@ function wireButtons() {
   });
 }
 
+function openWorkflowInGitHub() {
+  if (!canRead()) {
+    notify('Owner, repo, and workflow are required.');
+    return;
+  }
+
+  const workflowUrl = `https://github.com/${settings.owner}/${settings.repo}/actions/workflows/${settings.workflow}`;
+  window.open(workflowUrl, '_blank', 'noopener,noreferrer');
+  notify('Opened GitHub Actions workflow page.');
+}
+
 async function launchRun() {
   if (!canRun()) {
-    notify('Token, owner, repo, and workflow are required.');
+    notify('Token, owner, repo, and workflow are required to launch runs.');
     return;
   }
 
@@ -192,7 +218,7 @@ async function launchRun() {
 }
 
 async function fetchRuns() {
-  if (!canRun()) {
+  if (!canRead()) {
     runs = [];
     renderRuns();
     renderMetrics();
@@ -215,7 +241,7 @@ async function fetchRuns() {
 }
 
 async function fetchRunDetails(runId) {
-  if (!runId || !canRun()) {
+  if (!runId || !canRead()) {
     currentJobs = [];
     currentArtifacts = [];
     return;
@@ -240,6 +266,11 @@ async function fetchRunDetails(runId) {
 }
 
 async function downloadArtifact(artifact) {
+  if (!settings.token) {
+    notify('Token required to download artifacts.');
+    return;
+  }
+
   notify(`Downloading ${artifact.name}...`);
 
   try {
