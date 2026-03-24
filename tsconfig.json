@@ -12,7 +12,7 @@
     "baseUrl": ".",
     "paths": {
       "@shared/*": ["shared/*"],
-      "@pages/*": ["src/functional/ui/pages/*"],
+      "@pages/*": ["shared/pages/*"],
       "@api-clients/*": ["src/functional/api/clients/*"]
     }
   },

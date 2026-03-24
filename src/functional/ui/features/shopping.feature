@@ -1,12 +1,10 @@
 @functional @ui @smoke
-Feature: UI flow template
-  As a user
-  I want to validate a basic UI flow
-  So that I can confirm core behavior
+Feature: Benefits Dashboard smoke
+  As a benefits administrator
+  I want to access the dashboard
+  So that I can manage employees
 
-  Background:
-    Given the user is on the application home page
-
-  Scenario: Search and validate results
-    When the user searches for "<search-term>"
-    Then the result area should be visible
+  Scenario: Login and dashboard visibility
+    Given I am on the Paylocity login page
+    When I login with configured credentials
+    Then I should see the benefits dashboard

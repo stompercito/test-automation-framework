@@ -1,20 +1,21 @@
-import { test, expect } from '@playwright/test';
-import { ShopTestHomePage } from '../../../shared/pages/shoptest-home.page';
+import { expect, test } from '@playwright/test';
+import { config } from '../../../shared/config/config';
+import { PaylocityLoginPage } from '../../../shared/pages/paylocity-login.page';
 
-const SHOPTEST_VERSION = (Number(process.env.SHOPTEST_VERSION ?? 3) || 3) as 1 | 2 | 3;
-
-test.describe('Template Accessibility', () => {
-  test('page has a title', async ({ page }) => {
-    const homePage = new ShopTestHomePage(page);
-    await homePage.goto(SHOPTEST_VERSION);
+test.describe('Accessibility smoke scaffold', () => {
+  test('login page basic accessibility hook point', async ({ page }) => {
+    const loginPage = new PaylocityLoginPage(page);
+    await loginPage.goto();
+    await loginPage.assertReady();
 
     const title = await page.title();
     expect(title).toBeTruthy();
+
+    // TODO: integrate axe-core and enforce WCAG thresholds.
   });
 
-  test.skip('example: add accessibility engine checks', async () => {
-    // Template only:
-    // Integrate axe or your preferred tooling.
-    // Assert on violations by severity.
+  test('TODO: authenticated dashboard a11y scan', async () => {
+    test.skip(!config.credentials.username || !config.credentials.password, 'Credentials required for login');
+    // TODO: login + run component-level scan in dashboard and modals.
   });
 });

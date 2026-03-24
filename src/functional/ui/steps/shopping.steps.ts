@@ -1,20 +1,23 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
+import { config } from '../../../../shared/config/config';
 import { CustomWorld } from '../../../../shared/fixtures/world';
-import { ShopTestHomePage } from '../../../../shared/pages/shoptest-home.page';
+import { BenefitsDashboardPage } from '../../../../shared/pages/benefits-dashboard.page';
+import { PaylocityLoginPage } from '../../../../shared/pages/paylocity-login.page';
 
-Given('the user is on the application home page', async function (this: CustomWorld) {
-  const homePage = new ShopTestHomePage(this.page);
-  const selectedVersion = (this.data['shoptestVersion'] as 1 | 2 | 3 | undefined) ?? 3;
-  await homePage.goto(selectedVersion);
+Given('I am on the Paylocity login page', async function (this: CustomWorld) {
+  const loginPage = new PaylocityLoginPage(this.page);
+  await loginPage.goto();
+  await loginPage.assertReady();
 });
 
-When('the user searches for {string}', async function (this: CustomWorld, term: string) {
-  const homePage = new ShopTestHomePage(this.page);
-  await homePage.search(term);
+When('I login with configured credentials', async function (this: CustomWorld) {
+  const loginPage = new PaylocityLoginPage(this.page);
+  await loginPage.login(config.credentials.username, config.credentials.password);
 });
 
-Then('the result area should be visible', async function (this: CustomWorld) {
-  const homePage = new ShopTestHomePage(this.page);
-  await expect(homePage.resultCount).toBeVisible();
+Then('I should see the benefits dashboard', async function (this: CustomWorld) {
+  const dashboard = new BenefitsDashboardPage(this.page);
+  await dashboard.assertLoaded();
+  expect(await dashboard.table.isVisible()).toBeTruthy();
 });

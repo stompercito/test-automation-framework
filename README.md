@@ -138,25 +138,26 @@ npm test
 
 ## Running Tests
 
+Primary execution is Cucumber (`.feature` + steps). Playwright `.spec.ts` files are kept as demonstrative code-first examples.
+
 | Command | Description |
 |---|---|
-| `npm test` | Run ALL Playwright tests across all projects |
-| `npm run qa:local` | Open Playwright UI mode with environment defaults from `.env` |
-| `npm run qa:local:v1` | Open Playwright UI mode forcing `SHOPTEST_VERSION=1` |
-| `npm run qa:local:v2` | Open Playwright UI mode forcing `SHOPTEST_VERSION=2` |
-| `npm run qa:local:v3` | Open Playwright UI mode forcing `SHOPTEST_VERSION=3` |
-| `npm run test:ui` | Functional - UI tests only |
+| `npm test` | Run ALL functional BDD scenarios via Cucumber |
+| `npm run qa:local` | Run functional BDD scenarios locally with `.env` values |
+| `npm run test:ui` | Functional UI BDD scenarios only (alias of `test:bdd:ui`) |
 | `npm run test:ui:headed` | Functional - UI tests in headed browser mode (local visibility) |
-| `npm run test:api` | Functional - API tests only |
+| `npm run test:api` | Functional API BDD scenarios only (alias of `test:bdd:api`) |
 | `npm run test:accessibility` | Non-functional - Accessibility tests |
 | `npm run test:performance` | Non-functional - Performance tests |
-| `npm run test:functional` | UI + API tests combined |
+| `npm run test:functional` | UI + API BDD scenarios combined |
 | `npm run test:non-functional` | Accessibility + Performance combined |
 | `npm run test:bdd` | Run ALL BDD (Gherkin) scenarios via Cucumber |
 | `npm run test:bdd:ui` | BDD UI scenarios only (`@ui` tag) |
 | `npm run test:bdd:api` | BDD API scenarios only (`@api` tag) |
 | `npm run test:bdd:smoke` | Smoke scenarios only (`@smoke` tag) |
 | `npm run test:bdd:regression` | Regression scenarios only |
+| `npm run test:spec:ui` | Demonstrative code-first Playwright UI specs |
+| `npm run test:spec:api` | Demonstrative code-first Playwright API specs |
 
 ---
 
@@ -421,7 +422,7 @@ The framework is designed to grow with the product:
 | New API resource | Add a client in `src/functional/api/clients/` extending `ApiClient` |
 | New test category | Add a folder under `src/functional/` or `src/non-functional/` and register it in `playwright.config.ts` and `cucumber.config.ts` |
 | New environment | Add a `.env.staging` file and pass it via `dotenv -e .env.staging npm test` |
-| CI/CD integration | Use `npm test` (Playwright) or `npm run test:bdd` (Cucumber); both exit with code 1 on failure |
+| CI/CD integration | Use `npm run test:bdd` as primary functional execution; use `test:spec:*` only as demonstrative code-first examples |
 | Visual regression | Add `@playwright/experimental-ct-react` or integrate Percy/Applitools |
 | Load testing | Add a `src/non-functional/load/` project using k6 or Artillery |
 | Contract testing | Add Pact.js under `src/functional/api/contracts/` |

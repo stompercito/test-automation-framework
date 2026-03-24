@@ -11,23 +11,37 @@ import { APIRequestContext, APIResponse } from '@playwright/test';
 export abstract class ApiClient {
   constructor(protected readonly api: APIRequestContext) {}
 
-  protected async get<T>(path: string): Promise<{ status: number; body: T }> {
-    const response = await this.api.get(path);
+  protected async get<T>(
+    path: string,
+    options?: { headers?: Record<string, string>; params?: Record<string, string | number> },
+  ): Promise<{ status: number; body: T }> {
+    const response = await this.api.get(path, { headers: options?.headers, params: options?.params });
     return this.parse<T>(response);
   }
 
-  protected async post<T>(path: string, data: unknown): Promise<{ status: number; body: T }> {
-    const response = await this.api.post(path, { data });
+  protected async post<T>(
+    path: string,
+    data: unknown,
+    options?: { headers?: Record<string, string> },
+  ): Promise<{ status: number; body: T }> {
+    const response = await this.api.post(path, { data, headers: options?.headers });
     return this.parse<T>(response);
   }
 
-  protected async put<T>(path: string, data: unknown): Promise<{ status: number; body: T }> {
-    const response = await this.api.put(path, { data });
+  protected async put<T>(
+    path: string,
+    data: unknown,
+    options?: { headers?: Record<string, string> },
+  ): Promise<{ status: number; body: T }> {
+    const response = await this.api.put(path, { data, headers: options?.headers });
     return this.parse<T>(response);
   }
 
-  protected async delete<T>(path: string): Promise<{ status: number; body: T }> {
-    const response = await this.api.delete(path);
+  protected async delete<T>(
+    path: string,
+    options?: { headers?: Record<string, string> },
+  ): Promise<{ status: number; body: T }> {
+    const response = await this.api.delete(path, { headers: options?.headers });
     return this.parse<T>(response);
   }
 

@@ -1,14 +1,10 @@
 @functional @api @smoke
-Feature: API template
-  As a tester
-  I want to validate core API responses
-  So that I can trust service behavior
+Feature: Employees API smoke
+  As a QA engineer
+  I want core employee API coverage
+  So that CRUD risks are detected early
 
-  Scenario: GET endpoint returns success
-    When I send a "GET" request to "/<endpoint>"
-    Then the response status should be 200
-
-  Scenario: POST endpoint creates resource
-    Given I have a request payload with title "<title>" and body "<body>"
-    When I send a "POST" request to "/<endpoint>"
-    Then the response status should be 201
+  Scenario: Create and read employee
+    Given I have a valid employee payload
+    When I create the employee via API
+    Then the employee is created successfully

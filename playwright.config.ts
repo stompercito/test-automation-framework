@@ -1,11 +1,6 @@
 import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 import { config } from './shared/config/config';
-import {
-  HAS_LOCAL_SHOPTEST_REPO,
-  LOCAL_SHOPTEST_REPO_PATH,
-  LOCAL_SHOPTEST_URL,
-} from './shared/utils/shoptest-target';
 
 const isHeadless = config.browser.headless;
 const videoMode =
@@ -33,16 +28,6 @@ export default defineConfig({
     video: videoMode,
     headless: isHeadless,
   },
-  webServer:
-    config.baseUrl === LOCAL_SHOPTEST_URL && HAS_LOCAL_SHOPTEST_REPO
-      ? {
-          command: 'npm run dev -- --host 127.0.0.1 --port 4173',
-          cwd: LOCAL_SHOPTEST_REPO_PATH,
-          url: LOCAL_SHOPTEST_URL,
-          reuseExistingServer: true,
-          timeout: 120_000,
-        }
-      : undefined,
   projects: [
     {
       name: 'functional:ui',

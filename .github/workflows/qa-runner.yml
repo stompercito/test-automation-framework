@@ -1,7 +1,7 @@
 name: QA Runner
 
 run-name: >-
-  QA | suite=${{ inputs.suite || 'all' }} | version=${{ inputs.shoptest_version || '3' }} | actor=${{ github.actor }}
+  QA | suite=${{ inputs.suite || 'all' }} | actor=${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -19,20 +19,16 @@ on:
           - api
           - accessibility
           - performance
-      shoptest_version:
-        description: ShopTest version used by UI-driven suites
-        required: true
-        type: choice
-        default: '3'
-        options:
-          - '1'
-          - '2'
-          - '3'
       base_url:
-        description: Optional base URL for UI/non-functional suites
+        description: Base URL for UI/non-functional suites
         required: false
         type: string
-        default: ''
+        default: 'https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod/Account/Login'
+      api_base_url:
+        description: Base URL for API suites
+        required: false
+        type: string
+        default: 'https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod'
 
 permissions:
   contents: read
@@ -60,21 +56,27 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install chromium
 
-      - name: Run functional UI project
+      - name: Run functional UI project (Cucumber)
         env:
-          BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || 'https://stompercito.github.io/web-application-for-automation/' }}
-          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          BASE_URL: ${{ inputs.base_url }}
+          API_BASE_URL: ${{ inputs.api_base_url }}
+          PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
+          PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
+          API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:ui
+        run: npm run test:bdd:ui
 
-      - name: Upload UI Playwright report
+      - name: Upload UI Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-playwright-report
-          path: reports/playwright-html
+          name: ui-cucumber-report
+          path: reports/html
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Upload UI Allure results
@@ -83,6 +85,7 @@ jobs:
         with:
           name: ui-allure-results
           path: reports/allure-results
+          if-no-files-found: warn
           retention-days: 14
 
   api:
@@ -106,20 +109,26 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install chromium
 
-      - name: Run functional API project
+      - name: Run functional API project (Cucumber)
         env:
-          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          API_BASE_URL: ${{ inputs.api_base_url }}
+          PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
+          PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
+          API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:api
+        run: npm run test:bdd:api
 
-      - name: Upload API Playwright report
+      - name: Upload API Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: api-playwright-report
-          path: reports/playwright-html
+          name: api-cucumber-report
+          path: reports/html
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Upload API Allure results
@@ -128,6 +137,7 @@ jobs:
         with:
           name: api-allure-results
           path: reports/allure-results
+          if-no-files-found: warn
           retention-days: 14
 
   accessibility:
@@ -153,8 +163,13 @@ jobs:
 
       - name: Run accessibility project
         env:
-          BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || 'https://stompercito.github.io/web-application-for-automation/' }}
-          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          BASE_URL: ${{ inputs.base_url }}
+          API_BASE_URL: ${{ inputs.api_base_url }}
+          PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
+          PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
+          API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
@@ -199,8 +214,13 @@ jobs:
 
       - name: Run performance project
         env:
-          BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || 'https://stompercito.github.io/web-application-for-automation/' }}
-          SHOPTEST_VERSION: ${{ inputs.shoptest_version }}
+          BASE_URL: ${{ inputs.base_url }}
+          API_BASE_URL: ${{ inputs.api_base_url }}
+          PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
+          PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
+          API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true

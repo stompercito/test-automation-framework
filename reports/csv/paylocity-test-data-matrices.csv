@@ -1,0 +1,58 @@
+matrix_id,linked_test_case_id,target,field,dataset_name,input_value,expected_outcome,dataset_notes
+DDT-API-REQ-FIELDS,API-F-006,API required field validation,required fields,required_variation,missing firstName,Rejected,Payload omits firstName while other required fields remain valid.
+DDT-API-REQ-FIELDS,API-F-006,API required field validation,required fields,required_variation,missing lastName,Rejected,Payload omits lastName while other required fields remain valid.
+DDT-API-REQ-FIELDS,API-F-006,API required field validation,required fields,required_variation,missing username,Rejected,API contract marks username as required even if UI may not expose it.
+DDT-API-REQ-FIELDS,API-F-006,API required field validation,required fields,required_variation,missing firstName and lastName,Rejected,Multiple required fields omitted in same payload.
+DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length_boundary,0 chars,Validate actual behavior; likely invalid for required business intent,Boundary at minimum visible length.
+DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length_boundary,1 char,Accepted if within business/API rules,Smallest practical non-empty string.
+DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length_boundary,49 chars,Accepted,Near max valid length.
+DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length_boundary,50 chars,Accepted,Exact max length from contract.
+DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length_boundary,51 chars,Rejected,Exceeds max length.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,-1,Rejected,Below minimum.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,0,Accepted,Exact minimum.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,1,Accepted,Typical valid value.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,31,Accepted,Near maximum.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,32,Accepted,Exact maximum.
+DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,33,Rejected,Above maximum.
+DDT-API-INVALID-UUID,API-F-009,Invalid UUID handling,id path parameter,invalid_uuid,plain-text,Rejected,Example: not-a-uuid
+DDT-API-INVALID-UUID,API-F-009,Invalid UUID handling,id path parameter,invalid_uuid,numeric-string,Rejected,Example: 12345
+DDT-API-INVALID-UUID,API-F-009,Invalid UUID handling,id path parameter,invalid_uuid,empty-string,Rejected,Blank path segment or malformed URL
+DDT-API-INVALID-UUID,API-F-009,Invalid UUID handling,id path parameter,invalid_uuid,wrong-length-uuid,Rejected,UUID-like string with invalid length
+DDT-API-READONLY,API-F-010,Read-only fields cannot be client-controlled,partitionKey/sortKey/gross/benefitsCost/net,readonly_attempt,payload includes gross,Ignored or rejected,Client attempts to force derived value.
+DDT-API-READONLY,API-F-010,Read-only fields cannot be client-controlled,partitionKey/sortKey/gross/benefitsCost/net,readonly_attempt,payload includes benefitsCost,Ignored or rejected,Client attempts to force derived value.
+DDT-API-READONLY,API-F-010,Read-only fields cannot be client-controlled,partitionKey/sortKey/gross/benefitsCost/net,readonly_attempt,payload includes net,Ignored or rejected,Client attempts to force derived value.
+DDT-API-READONLY,API-F-010,Read-only fields cannot be client-controlled,partitionKey/sortKey/gross/benefitsCost/net,readonly_attempt,payload includes sortKey or partitionKey,Ignored or rejected,Client attempts to control server-managed keys.
+DDT-API-EXTRA-PROPS,API-F-011,Unexpected properties rejection,payload extra property,extra_property,middleName,Rejected,Property not present in schema.
+DDT-API-EXTRA-PROPS,API-F-011,Unexpected properties rejection,payload extra property,extra_property,randomFlag,Rejected,Unknown boolean-like property.
+DDT-API-EXTRA-PROPS,API-F-011,Unexpected properties rejection,payload extra property,extra_property,nestedObject,Rejected,Unknown nested structure.
+DDT-API-EXPIRATION,API-F-012,Expiration format validation,expiration,date_time_variation,invalid text,Rejected,Example: tomorrow
+DDT-API-EXPIRATION,API-F-012,Expiration format validation,expiration,date_time_variation,date only,Rejected or normalized per implementation,Example: 2026-03-24
+DDT-API-EXPIRATION,API-F-012,Expiration format validation,expiration,date_time_variation,malformed timestamp,Rejected,Example: 2026-13-99T99:99:99Z
+DDT-API-EXPIRATION,API-F-012,Expiration format validation,expiration,date_time_variation,valid ISO date-time,Accepted,Control value for comparison.
+DDT-API-AUTH,API-F-013,Authorization coverage,Authorization header,auth_variation,missing header,Rejected,No Authorization header sent.
+DDT-API-AUTH,API-F-013,Authorization coverage,Authorization header,auth_variation,invalid token,Rejected,Malformed or incorrect token.
+DDT-API-AUTH,API-F-013,Authorization coverage,Authorization header,auth_variation,wrong auth scheme,Rejected,"Bearer instead of Basic, if applicable."
+DDT-API-AUTH,API-F-013,Authorization coverage,Authorization header,auth_variation,valid Basic token,Accepted,Control case.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,empty,Validate actual behavior and document whether blocked/saved/error,Blank input.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,spaces,Validate actual behavior and document whether blocked/saved/error,Whitespace-only input.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,text,Validate actual behavior and document whether blocked/saved/error,Alphabetic input in text field.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,decimal,Validate actual behavior and document whether blocked/saved/error,Decimal value entered in field.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,3abc,Validate actual behavior and document whether blocked/saved/error,Mixed alphanumeric parsing risk.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,-1,Validate actual behavior and document whether blocked/saved/error,Negative number.
+DDT-UI-DEPENDANTS,UI-F-012,UI dependants input handling,dependants,input_variation,33,Validate actual behavior and document whether blocked/saved/error,Above documented API max.
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field validation,employee form required fields,required_variation,missing firstName,Blocked or failed consistently,Leave first name blank.
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field validation,employee form required fields,required_variation,missing lastName,Blocked or failed consistently,Leave last name blank.
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field validation,employee form required fields,required_variation,missing firstName and lastName,Blocked or failed consistently,Leave both name fields blank.
+DDT-PERF-CRUD-REPEAT,PERF-NF-003,Repeated CRUD stability,operation cycle,repeat_cycle,10 sequential create/delete cycles,Stable,No crashes or escalating failures.
+DDT-PERF-CRUD-REPEAT,PERF-NF-003,Repeated CRUD stability,operation cycle,repeat_cycle,10 sequential create/update/delete cycles,Stable,No inconsistent state or progressive slowdown.
+DDT-UX-VIEWPORTS,UX-NF-001,Responsive viewport coverage,viewport,viewport_size,desktop wide,Usable,Typical laptop/desktop view.
+DDT-UX-VIEWPORTS,UX-NF-001,Responsive viewport coverage,viewport,viewport_size,desktop narrow,Usable,Reduced desktop width.
+DDT-UX-VIEWPORTS,UX-NF-001,Responsive viewport coverage,viewport,viewport_size,tablet portrait,Usable or documented issue,Medium viewport.
+DDT-UX-VIEWPORTS,UX-NF-001,Responsive viewport coverage,viewport,viewport_size,mobile-like narrow width,Usable or documented issue,Stress responsive layout.
+DDT-UX-LONG-VALUES,UX-NF-002,Long value rendering,table cell content,long_value_case,long UUID display,No severe overflow,Check id column behavior.
+DDT-UX-LONG-VALUES,UX-NF-002,Long value rendering,table cell content,long_value_case,50-char firstName,No severe overflow,Near max string length.
+DDT-UX-LONG-VALUES,UX-NF-002,Long value rendering,table cell content,long_value_case,50-char lastName,No severe overflow,Near max string length.
+DDT-UX-ZOOM,UX-NF-003,Zoom readability coverage,browser zoom,zoom_level,80%,Usable,Control zoom out.
+DDT-UX-ZOOM,UX-NF-003,Zoom readability coverage,browser zoom,zoom_level,100%,Usable,Default zoom.
+DDT-UX-ZOOM,UX-NF-003,Zoom readability coverage,browser zoom,zoom_level,125%,Usable or documented issue,Common accessibility zoom.
+DDT-UX-ZOOM,UX-NF-003,Zoom readability coverage,browser zoom,zoom_level,150%,Usable or documented issue,Stress zoom behavior.

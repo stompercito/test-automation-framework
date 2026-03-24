@@ -1,36 +1,26 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
+import { buildEmployeePayload } from '../../../../shared/test-data/employee.builder';
 import { CustomWorld } from '../../../../shared/fixtures/world';
-import { NewPost, PostsClient } from '../clients/posts.client';
+import { EmployeesClient } from '../clients/employees.client';
 
-When(
-  'I send a {string} request to {string}',
-  async function (this: CustomWorld, method: string, path: string) {
-    const client = new PostsClient(this.apiContext);
-    const payload = this.data['requestPayload'] as NewPost | undefined;
+Given('I have a valid employee payload', async function (this: CustomWorld) {
+  this.data['employeePayload'] = buildEmployeePayload();
+});
 
-    if (method === 'GET') {
-      this.data['response'] = await client.getAll();
-      return;
-    }
+When('I create the employee via API', async function (this: CustomWorld) {
+  const client = new EmployeesClient(this.apiContext);
+  const payload = this.data['employeePayload'] as ReturnType<typeof buildEmployeePayload>;
+  const response = await client.create(payload);
 
-    if (method === 'POST') {
-      this.data['response'] = await client.create(payload ?? { userId: 1, title: '', body: '' });
-      return;
-    }
+  this.data['employeeResponse'] = response;
+  if (response.status === 200 && response.body.id) {
+    this.trackEmployeeId(response.body.id);
+  }
+});
 
-    throw new Error(`Unsupported method in template: ${method} ${path}`);
-  },
-);
-
-Given(
-  'I have a request payload with title {string} and body {string}',
-  async function (this: CustomWorld, title: string, body: string) {
-    this.data['requestPayload'] = { userId: 1, title, body } satisfies NewPost;
-  },
-);
-
-Then('the response status should be {int}', async function (this: CustomWorld, expectedStatus: number) {
-  const response = this.data['response'] as { status: number; body: unknown };
-  expect(response.status).toBe(expectedStatus);
+Then('the employee is created successfully', async function (this: CustomWorld) {
+  const response = this.data['employeeResponse'] as { status: number; body: { id: string } };
+  expect(response.status).toBe(200);
+  expect(response.body.id).toBeTruthy();
 });
