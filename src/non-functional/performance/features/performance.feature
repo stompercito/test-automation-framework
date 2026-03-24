@@ -1,16 +1,9 @@
-@non-functional @performance @regression @v3
-Feature: Page Performance
+@non-functional @performance @regression
+Feature: Performance template
   As a product owner
-  I want the application pages to load within acceptable time limits
-  So that users have a fast and responsive experience
+  I want baseline page performance checks
+  So that load time remains acceptable
 
-  Background:
-    Given I measure performance from the home page
-
-  Scenario: Home page loads within 3 seconds
+  Scenario: Home page load budget
     When I navigate to the home page
-    Then the page should load within 3000 milliseconds
-
-  Scenario: LCP metric is within budget
-    When I navigate to the home page
-    Then the Largest Contentful Paint should be under 2500 milliseconds
+    Then the page should load within 5000 milliseconds

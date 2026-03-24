@@ -10,7 +10,7 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 2. [Directory Structure](#directory-structure)
 3. [Quick Start](#quick-start)
 4. [Running Tests](#running-tests)
-5. [Reports & Dashboard](#reports--dashboard)
+5. [Reports](#reports--dashboard)
 6. [Writing Tests](#writing-tests)
    - [Page Object Model (UI)](#page-object-model-ui)
    - [API Clients & Hooks](#api-clients--hooks)
@@ -203,20 +203,6 @@ npm run report:allure:open       # open the site in the browser
 | Playwright UI mode (`npm run qa:local`) | Interactive test runner UI | Authoring/debugging tests while running them |
 
 Note: Playwright UI mode is a runner interface, not the same as a generated report artifact.
-
-### GitHub QA Dashboard (Framework UI)
-
-This framework now includes a lightweight QA dashboard UI in `dashboard/` plus workflow automation in `.github/workflows/`.
-
-- `qa-runner.yml`: `workflow_dispatch` runner for `functional`, `non-functional`, or `all` suites
-- `deploy-dashboard.yml`: deploys the dashboard to GitHub Pages
-
-From the dashboard you can:
-
-- Launch runs with optional inputs (`base_url`, `shoptest_version`)
-- Watch run/job progress by category
-- Download run artifacts (Playwright report + Allure results)
-- Add quick triage labels and notes per failed job (stored in browser local storage)
 
 ---
 
