@@ -162,6 +162,14 @@ npm test
 
 ## Reports & Dashboard
 
+### Which one should I open?
+
+- **Primary QA dashboard:** Open **Allure** (`npm run report:allure`) when you want consolidated reporting and better analysis views.
+- **Quick debug report:** Open **Playwright HTML report** (`npm run report:open`) when you want a fast local look at failures, traces, and media.
+- **Execution UI (not a final report):** Use **Playwright UI mode** (`npm run qa:local`) to run and inspect tests interactively while developing.
+
+In short: Allure is the recommended report to share/review results, while Playwright HTML and UI mode are mainly for local debugging and test authoring workflows.
+
 ### Playwright HTML Report (built-in)
 
 After any test run the HTML report is written to `reports/playwright-html/`. Open it with:
@@ -181,9 +189,20 @@ Allure provides a rich, interactive dashboard with trend charts, categories, and
 npm run report:allure
 
 # Or step by step:
-npm run report:allure:generate   # process raw results ? HTML site
+npm run report:allure:generate   # process raw results -> HTML site
 npm run report:allure:open       # open the site in the browser
 ```
+
+### Report Type Differences
+
+| Item | What it is | Best use |
+|---|---|---|
+| `reports/allure-results/` | Raw result artifacts produced during test execution | Input data for generating the Allure dashboard |
+| Allure dashboard (`reports/allure-report/`) | Generated, rich HTML analytics dashboard | Main QA reporting and result review |
+| Playwright HTML report (`reports/playwright-html/`) | Built-in Playwright execution report | Quick local debugging |
+| Playwright UI mode (`npm run qa:local`) | Interactive test runner UI | Authoring/debugging tests while running them |
+
+Note: Playwright UI mode is a runner interface, not the same as a generated report artifact.
 
 ### GitHub QA Dashboard (Framework UI)
 
