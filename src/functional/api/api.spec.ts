@@ -10,7 +10,7 @@ import {
   getApiRequiredFieldRows,
   getApiStringLengthRows,
 } from '../../../shared/test-data/paylocity-matrices';
-import { EmployeesClient } from './clients/employees.client';
+import { EmployeesClient } from '../../../shared/clients/employees.client';
 import { assertEmployeeShape } from './validators/employee.validator';
 
 test.describe('Paylocity Employees API', () => {

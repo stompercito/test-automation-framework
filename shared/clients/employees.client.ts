@@ -1,7 +1,7 @@
-import { ApiClient } from '../../../../shared/utils/api-client';
-import { buildApiAuthHeaders } from '../../../../shared/utils/auth';
-import { EmployeePayload } from '../../../../shared/test-data/employee.builder';
-import { EmployeeResponse } from '../validators/employee.validator';
+import { ApiClient } from '../utils/api-client';
+import { buildApiAuthHeaders } from '../utils/auth';
+import { EmployeePayload } from '../test-data/employee.builder';
+import { EmployeeResponse } from '../../src/functional/api/validators/employee.validator';
 
 export class EmployeesClient extends ApiClient {
   private readonly basePath = '/api/Employees';

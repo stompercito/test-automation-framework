@@ -6,7 +6,7 @@ import { APIRequestContext, APIResponse } from '@playwright/test';
  *  - Standardised error messages
  *  - A hook-friendly interface for use in BDD Before hooks
  *
- * Every API client in src/functional/api/clients/ extends this class.
+ * Every API client in shared/clients/ extends this class.
  */
 export abstract class ApiClient {
   constructor(protected readonly api: APIRequestContext) {}

@@ -212,7 +212,7 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install chromium
 
-      - name: Run performance project
+      - name: Run performance project (Cucumber)
         env:
           BASE_URL: ${{ inputs.base_url }}
           API_BASE_URL: ${{ inputs.api_base_url }}
@@ -224,14 +224,15 @@ jobs:
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:performance
+        run: npm run test:bdd:performance
 
-      - name: Upload performance Playwright report
+      - name: Upload performance Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: performance-playwright-report
-          path: reports/playwright-html
+          name: performance-cucumber-report
+          path: reports/html
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Upload performance Allure results
@@ -240,4 +241,5 @@ jobs:
         with:
           name: performance-allure-results
           path: reports/allure-results
+          if-no-files-found: warn
           retention-days: 14

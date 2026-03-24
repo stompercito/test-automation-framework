@@ -7,7 +7,7 @@ export function buildApiAuthHeaders(overrides?: {
 }): Record<string, string> {
   const token = overrides?.token ?? config.apiAuth.token;
   if (token) {
-    return { Authorization: `Bearer ${token}` };
+    return { Authorization: `Basic ${token}` };
   }
 
   const username = overrides?.username ?? config.apiAuth.username ?? config.credentials.username;

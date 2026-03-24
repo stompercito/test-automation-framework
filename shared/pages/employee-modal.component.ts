@@ -8,6 +8,7 @@ export type EmployeeFormData = {
 
 export class EmployeeModal {
   readonly modal: Locator;
+  readonly idInput: Locator;
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
   readonly dependantsInput: Locator;
@@ -16,6 +17,7 @@ export class EmployeeModal {
 
   constructor(private readonly page: Page) {
     this.modal = page.locator('#employeeModal');
+    this.idInput = page.locator('#id');
     this.firstNameInput = page.locator('#firstName');
     this.lastNameInput = page.locator('#lastName');
     this.dependantsInput = page.locator('#dependants');

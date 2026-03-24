@@ -5,7 +5,7 @@ import {
 } from '../../../shared/test-data/employee.builder';
 import { getUiDependantsRows, getUiRequiredRows } from '../../../shared/test-data/paylocity-matrices';
 import { calculateCompensation, parseCurrencyLikeValue } from '../../../shared/utils/payroll';
-import { EmployeesClient } from '../api/clients/employees.client';
+import { EmployeesClient } from '../../../shared/clients/employees.client';
 import { BenefitsDashboardPage } from '../../../shared/pages/benefits-dashboard.page';
 import { PaylocityLoginPage } from '../../../shared/pages/paylocity-login.page';
 

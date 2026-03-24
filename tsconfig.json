@@ -13,7 +13,7 @@
     "paths": {
       "@shared/*": ["shared/*"],
       "@pages/*": ["shared/pages/*"],
-      "@api-clients/*": ["src/functional/api/clients/*"]
+      "@api-clients/*": ["shared/clients/*"]
     }
   },
   "include": ["src/**/*", "shared/**/*", "playwright.config.ts"],

@@ -1,9 +1,11 @@
 /** @type {import('@cucumber/cucumber').IProfiles} */
 const sharedOptions = {
   require: [
-    'src/functional/ui/hooks/**/*.ts',
-    'src/functional/ui/steps/**/*.ts',
-    'src/functional/api/steps/**/*.ts',
+    'shared/steps/common/**/*.ts',
+    'shared/steps/ui/**/*.ts',
+    'shared/steps/api/**/*.ts',
+    'shared/steps/accessibility/**/*.ts',
+    'shared/steps/performance/**/*.ts',
     'shared/fixtures/world.ts',
     'shared/fixtures/hooks.ts',
   ],
@@ -56,6 +58,24 @@ const profiles = {
       'src/functional/api/features/**/*.feature',
     ],
     tags: '@regression',
+  },
+
+  performance: {
+    ...sharedOptions,
+    paths: ['src/non-functional/performance/features/**/*.feature'],
+  },
+
+  accessibility: {
+    ...sharedOptions,
+    paths: ['src/non-functional/accessibility/features/**/*.feature'],
+  },
+
+  nonfunctional: {
+    ...sharedOptions,
+    paths: [
+      'src/non-functional/performance/features/**/*.feature',
+      'src/non-functional/accessibility/features/**/*.feature',
+    ],
   },
 };
 

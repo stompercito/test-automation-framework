@@ -11,14 +11,15 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 3. [Quick Start](#quick-start)
 4. [Running Tests](#running-tests)
 5. [Reports](#reports--dashboard)
-6. [Writing Tests](#writing-tests)
+6. [Test Plan, Test Cases & Bugs](#test-plan-test-cases--bugs)
+7. [Writing Tests](#writing-tests)
    - [Page Object Model (UI)](#page-object-model-ui)
    - [API Clients & Hooks](#api-clients--hooks)
    - [BDD / Gherkin Feature Files](#bdd--gherkin-feature-files)
-7. [Configuration](#configuration)
-8. [Tags & Test Filtering](#tags--test-filtering)
-9. [Framework Design Decisions (ISTQB-backed)](#framework-design-decisions-istqb-backed)
-10. [Scalability & Extensibility](#scalability--extensibility)
+8. [Configuration](#configuration)
+9. [Tags & Test Filtering](#tags--test-filtering)
+10. [Framework Design Decisions (ISTQB-backed)](#framework-design-decisions-istqb-backed)
+11. [Scalability & Extensibility](#scalability--extensibility)
 
 ---
 
@@ -32,18 +33,19 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 |  |    FUNCTIONAL          |  |    NON-FUNCTIONAL            | |
 |  |  +--------+ +-------+  |  |  +-----------+ +----------+ | |
 |  |  |  UI    | |  API  |  |  |  |Accessibility| |Performance| | |
-|  |  | (POM)  | |(Client|  |  |  | (WCAG 2.1)| |(Nav Timing| | |
+|  |  | (POM)  | |CRUD/Auth| |  |  |  (Hybrid)  | |CRUD/Stable| | |
 |  |  +--------+ +-------+  |  |  +-----------+ +----------+ | |
 |  +-----------------------+  +------------------------------+ |
 |                                                              |
 |  +--------------------------------------------------------+  |
 |  |                     SHARED LAYER                        |  |
-|  |   config  |  fixtures/world  |  fixtures/hooks  | utils |  |
+|  | clients | config | fixtures | pages |                    |  |
+|  | steps   | test-data | utils                              |  |
 |  +--------------------------------------------------------+  |
 |                                                              |
 |  +------------------+  +---------------------------------+  |
-|  |  Playwright Test |  |  Cucumber (Gherkin / BDD)        |  |
-|  |  (native .spec)  |  |  (.feature + step definitions)  |  |
+|  | Playwright Engine|  | Cucumber Runner (Primary)        |  |
+|  |  (UI/API driver) |  |  (.feature + step definitions)  |  |
 |  +------------------+  +---------------------------------+  |
 |                                                              |
 |  +------------------------------------------------------+    |
@@ -61,51 +63,52 @@ test-automation-framework/
 +-- src/
 |   +-- functional/
 |   |   +-- ui/
-|   |   |   +-- pages/           # Page Object Model classes
-|   |   |   |   +-- base.page.ts
-|   |   |   |   +-- login.page.ts
-|   |   |   |   +-- dashboard.page.ts
 |   |   |   +-- features/        # Gherkin feature files (UI)
-|   |   |   |   +-- authentication.feature
-|   |   |   +-- steps/           # Cucumber step definitions (UI)
-|   |   |   |   +-- authentication.steps.ts
-|   |   |   +-- ui.spec.ts       # Playwright-native UI spec
+|   |   |   |   +-- smoke.feature
+|   |   |   |   +-- add-employee.feature
+|   |   |   |   +-- edit-employee.feature
+|   |   |   |   +-- delete-employee.feature
+|   |   |   |   +-- dashboard-validations.feature
 |   |   +-- api/
-|   |       +-- clients/         # API client classes
-|   |       |   +-- posts.client.ts
 |   |       +-- features/        # Gherkin feature files (API)
-|   |       |   +-- posts.feature
-|   |       +-- steps/           # Cucumber step definitions (API)
-|   |       |   +-- posts.steps.ts
-|   |       +-- api.spec.ts      # Playwright-native API spec
+|   |       |   +-- api-smoke.feature
+|   |       |   +-- api-create.feature
+|   |       |   +-- api-read.feature
+|   |       |   +-- api-update.feature
+|   |       |   +-- api-delete.feature
+|   |       |   +-- api-auth.feature
 |   +-- non-functional/
 |       +-- accessibility/
 |       |   +-- features/        # Gherkin feature files (a11y)
-|       |   |   +-- accessibility.feature
-|       |   +-- steps/
-|       |   |   +-- accessibility.steps.ts
-|       |   +-- accessibility.spec.ts
+|       |   |   +-- accessibility-hybrid.feature
 |       +-- performance/
 |           +-- features/        # Gherkin feature files (perf)
-|           |   +-- performance.feature
-|           +-- steps/
-|           |   +-- performance.steps.ts
-|           +-- performance.spec.ts
+|           |   +-- performance-crud.feature
 +-- shared/
+|   +-- clients/
+|   |   +-- employees.client.ts  # Shared API client classes
 |   +-- config/
 |   |   +-- config.ts            # Central environment configuration
-|   |   +-- tags.ts              # BDD tag constants
 |   +-- fixtures/
 |   |   +-- world.ts             # Cucumber CustomWorld (shared context)
 |   |   +-- hooks.ts             # Before/After lifecycle hooks
+|   +-- pages/                   # Shared UI page objects/components
+|   +-- steps/                   # Shared Cucumber step definitions
+|   |   +-- api/
+|   |   +-- ui/
+|   |   +-- performance/
+|   |   +-- accessibility/
+|   +-- test-data/               # Builders and DDT matrices
 |   +-- utils/
 |       +-- api-client.ts        # Abstract API client base class
-|       +-- helpers.ts           # Miscellaneous utilities
+|       +-- auth.ts              # API auth header helpers
+|       +-- payroll.ts           # Payroll/business-rule helpers
 +-- reports/                     # Generated reports (git-ignored)
 |   +-- html/
+|   +-- csv/
 |   +-- allure-results/
 +-- playwright.config.ts         # Playwright multi-project config
-+-- cucumber.config.ts           # Cucumber / BDD config
++-- cucumber.config.js           # Cucumber / BDD config
 +-- tsconfig.json
 +-- .env.example                 # Environment variable template
 +-- package.json
@@ -138,26 +141,21 @@ npm test
 
 ## Running Tests
 
-Primary execution is Cucumber (`.feature` + steps). Playwright `.spec.ts` files are kept as demonstrative code-first examples.
+Primary execution is Cucumber (`.feature` + steps).
 
 | Command | Description |
 |---|---|
-| `npm test` | Run ALL functional BDD scenarios via Cucumber |
-| `npm run qa:local` | Run functional BDD scenarios locally with `.env` values |
-| `npm run test:ui` | Functional UI BDD scenarios only (alias of `test:bdd:ui`) |
-| `npm run test:ui:headed` | Functional - UI tests in headed browser mode (local visibility) |
-| `npm run test:api` | Functional API BDD scenarios only (alias of `test:bdd:api`) |
-| `npm run test:accessibility` | Non-functional - Accessibility tests |
-| `npm run test:performance` | Non-functional - Performance tests |
-| `npm run test:functional` | UI + API BDD scenarios combined |
-| `npm run test:non-functional` | Accessibility + Performance combined |
-| `npm run test:bdd` | Run ALL BDD (Gherkin) scenarios via Cucumber |
-| `npm run test:bdd:ui` | BDD UI scenarios only (`@ui` tag) |
-| `npm run test:bdd:api` | BDD API scenarios only (`@api` tag) |
-| `npm run test:bdd:smoke` | Smoke scenarios only (`@smoke` tag) |
-| `npm run test:bdd:regression` | Regression scenarios only |
-| `npm run test:spec:ui` | Demonstrative code-first Playwright UI specs |
-| `npm run test:spec:api` | Demonstrative code-first Playwright API specs |
+| `npm test` | Run all suites (functional + non-functional) |
+| `npm run test:all` | Run all suites (functional + non-functional) |
+| `npm run test:functional` | Run all functional suites (UI + API) |
+| `npm run test:non-functional` | Run all non-functional suites (Accessibility + Performance) |
+| `npm run test:ui` | Run UI functional suite only |
+| `npm run test:api` | Run API functional suite only |
+| `npm run test:accessibility` | Run accessibility non-functional suite only |
+| `npm run test:performance` | Run performance non-functional suite only |
+| `npm run test:smoke` | Run smoke scenarios only |
+| `npm run test:regression` | Run regression scenarios only |
+| `npm run qa:local` | Local headed functional run via Cucumber (does not open Playwright UI mode) |
 
 ---
 
@@ -167,9 +165,9 @@ Primary execution is Cucumber (`.feature` + steps). Playwright `.spec.ts` files 
 
 - **Primary QA dashboard:** Open **Allure** (`npm run report:allure`) when you want consolidated reporting and better analysis views.
 - **Quick debug report:** Open **Playwright HTML report** (`npm run report:open`) when you want a fast local look at failures, traces, and media.
-- **Execution UI (not a final report):** Use **Playwright UI mode** (`npm run qa:local`) to run and inspect tests interactively while developing.
+- **Local execution:** Use `npm run qa:local` to run functional Cucumber tests in headed mode for local debugging.
 
-In short: Allure is the recommended report to share/review results, while Playwright HTML and UI mode are mainly for local debugging and test authoring workflows.
+In short: Allure is the recommended report to share/review results, while Playwright HTML is mainly for local debugging.
 
 ### Playwright HTML Report (built-in)
 
@@ -201,9 +199,32 @@ npm run report:allure:open       # open the site in the browser
 | `reports/allure-results/` | Raw result artifacts produced during test execution | Input data for generating the Allure dashboard |
 | Allure dashboard (`reports/allure-report/`) | Generated, rich HTML analytics dashboard | Main QA reporting and result review |
 | Playwright HTML report (`reports/playwright-html/`) | Built-in Playwright execution report | Quick local debugging |
-| Playwright UI mode (`npm run qa:local`) | Interactive test runner UI | Authoring/debugging tests while running them |
+| `npm run qa:local` | Headed local Cucumber execution | Local debugging with visible browser run |
 
-Note: Playwright UI mode is a runner interface, not the same as a generated report artifact.
+---
+
+## Test Plan, Test Cases & Bugs
+
+Use the following files as the source of QA strategy, coverage, and defect tracking artifacts:
+
+- **Test strategy / approach**
+  - `paylocity-test-plan.md` (canonical source in repo root)
+  - `reports/paylocity-test-plan.md`
+- **Test cases catalog (CSV)**
+  - `reports/csv/paylocity-test-cases.csv`
+- **Data-driven matrices (CSV)**
+  - `reports/csv/paylocity-test-data-matrices.csv`
+- **Bug reporting template (CSV)**
+  - `reports/csv/paylocity-bug-report-template.csv`
+- **Bug reports output (recommended location)**
+  - `reports/csv/` (for generated or manually filled bug report files)
+
+Recommended reading order:
+1. Test plan (`paylocity-test-plan.md`)
+2. Test cases (`reports/csv/paylocity-test-cases.csv`)
+3. Data matrices (`reports/csv/paylocity-test-data-matrices.csv`)
+4. Bug report template (`reports/csv/paylocity-bug-report-template.csv`)
+5. Bug report outputs (stored under `reports/csv/`)
 
 ---
 
@@ -214,7 +235,7 @@ Note: Playwright UI mode is a runner interface, not the same as a generated repo
 Every screen in the application gets a **Page class** that extends `BasePage`:
 
 ```typescript
-// src/functional/ui/pages/my-screen.page.ts
+// shared/pages/my-screen.page.ts
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './base.page';
 
@@ -243,8 +264,8 @@ await expect(screen.heading).toBeVisible();
 Extend `ApiClient` to create a typed client for each API resource:
 
 ```typescript
-// src/functional/api/clients/users.client.ts
-import { ApiClient } from '../../../shared/utils/api-client';
+// shared/clients/users.client.ts
+import { ApiClient } from '../utils/api-client';
 export class UsersClient extends ApiClient {
   async getUser(id: number) { return this.get(`/users/${id}`); }
 }
@@ -282,7 +303,7 @@ Feature: Product Search
     And all results should contain the word "laptop"
 ```
 
-Step definitions live in the co-located `steps/` folder and receive the `CustomWorld` context which provides both `this.page` (UI) and `this.apiContext` (API).
+Step definitions live in `shared/steps/**` and receive the `CustomWorld` context which provides both `this.page` (UI) and `this.apiContext` (API).
 
 ---
 
@@ -292,25 +313,22 @@ All configuration is centralised in `shared/config/config.ts` and driven by envi
 
 | Variable | Default | Description |
 |---|---|---|
-| `BASE_URL` | `https://stompercito.github.io/web-application-for-automation/` | Web application URL |
-| `API_BASE_URL` | `mock:shoptest` | API base URL |
-| `TEST_USERNAME` | `test_user` | Default test user |
-| `TEST_PASSWORD` | `test_password` | Default test password |
-| `ENVIRONMENT` | `local` | `local` / `staging` / `production` |
-| `HEADLESS` | `true` | Run browser headlessly |
-| `PW_VIDEO_MODE` | `retain-on-failure` | Playwright video capture mode |
+| `BASE_URL` | `https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod/Account/Login` | UI login URL used by functional UI tests |
+| `API_BASE_URL` | `https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod` | Base URL for API clients and API tests |
+| `PAYLOCITY_USERNAME` | `replace_me` | Primary username used for UI/API authentication |
+| `PAYLOCITY_PASSWORD` | `replace_me` | Primary password used for UI/API authentication |
+| `API_AUTH_TOKEN` | `` | Optional API token auth for API requests |
+| `ENVIRONMENT` | `staging` | Optional environment label: `local` / `staging` / `production` |
+| `HEADLESS` | `true` | Runs browser headlessly unless set to `false` |
 | `SLOW_MO` | `0` | Milliseconds between Playwright actions |
 | `DEFAULT_TIMEOUT` | `30000` | Default action timeout (ms) |
-| `NAVIGATION_TIMEOUT` | `60000` | Page navigation timeout (ms) |
-| `MAX_LOAD_TIME_MS` | `5000` | Performance test load time budget |
-| `MAX_LCP_MS` | `2500` | LCP budget for performance tests |
-| `SHOPTEST_VERSION` | `3` | Version selector used by ShopTest UI/non-functional suites |
+| `NAVIGATION_TIMEOUT` | `60000` | Navigation timeout (ms) |
 
 ---
 
 ## Tags & Test Filtering
 
-Tags are defined in `shared/config/tags.ts` and applied in feature files:
+Tags are applied directly in feature files and used for test filtering:
 
 | Tag | Meaning |
 |---|---|
@@ -328,10 +346,10 @@ Tags are defined in `shared/config/tags.ts` and applied in feature files:
 
 ```bash
 # Run only critical smoke tests
-npm run test:bdd -- --tags "@smoke and @critical"
+npx cucumber-js --config cucumber.config.js --tags "@smoke and @critical"
 
 # Run everything except low-priority
-npm run test:bdd -- --tags "not @low"
+npx cucumber-js --config cucumber.config.js --tags "not @low"
 ```
 
 ---
@@ -343,7 +361,7 @@ This section justifies every architectural decision with references to the **IST
 ### 1. Two-Layer Testing Taxonomy: Functional vs Non-Functional
 
 **ISTQB FL 2.3** classifies testing into functional and non-functional testing. Keeping them in separate directory trees (`src/functional/` and `src/non-functional/`) ensures:
-- Each layer can be run in isolation (`npm run test:functional`).
+- Each layer can be run in isolation (`npm run test:functional` and `npm run test:non-functional`).
 - Non-functional tests (performance, accessibility) do not pollute functional test reports.
 - Teams can be organised by domain without merge conflicts.
 
@@ -383,13 +401,11 @@ Playwright was chosen over Selenium and Cypress because:
 - **Native API request context** enables hybrid UI/API tests without extra dependencies.
 - **Auto-waiting** reduces flaky tests caused by timing issues (ISTQB TAE reliability principle).
 
-### 7. Dual Runners: Playwright Native + Cucumber
+### 7. Cucumber-First Execution Model
 
-The framework supports both:
-- **Playwright `.spec.ts` files** - for developers who prefer code-first, fast feedback loops.
-- **Cucumber `.feature` files** - for BDD collaboration with non-technical stakeholders.
+The framework is executed primarily through **Cucumber `.feature` files** for collaborative, requirement-aligned automation.
 
-Both runners share the same Page Objects and API clients, so there is no duplication.
+Playwright remains the execution engine (browser/API driver), while scenarios and step definitions are the source of truth for test intent.
 
 ### 8. Allure + Playwright HTML Reports
 
@@ -418,11 +434,11 @@ The framework is designed to grow with the product:
 
 | Need | How to extend |
 |---|---|
-| New page | Add a class in `src/functional/ui/pages/` extending `BasePage` |
-| New API resource | Add a client in `src/functional/api/clients/` extending `ApiClient` |
-| New test category | Add a folder under `src/functional/` or `src/non-functional/` and register it in `playwright.config.ts` and `cucumber.config.ts` |
-| New environment | Add a `.env.staging` file and pass it via `dotenv -e .env.staging npm test` |
-| CI/CD integration | Use `npm run test:bdd` as primary functional execution; use `test:spec:*` only as demonstrative code-first examples |
+| New page | Add a class in `shared/pages/` extending `BasePage` |
+| New API resource | Add a client in `shared/clients/` extending `ApiClient` |
+| New test category | Add feature files under `src/functional/` or `src/non-functional/` and register paths/profiles in `cucumber.config.js` |
+| New environment | Add a new `.env.<name>` file and load it in your local shell/CI before running `npm test` |
+| CI/CD integration | Use `npm run test:functional` (or `npm test` for full coverage) as primary pipeline execution |
 | Visual regression | Add `@playwright/experimental-ct-react` or integrate Percy/Applitools |
 | Load testing | Add a `src/non-functional/load/` project using k6 or Artillery |
 | Contract testing | Add Pact.js under `src/functional/api/contracts/` |
