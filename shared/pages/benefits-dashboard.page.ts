@@ -66,6 +66,10 @@ export class BenefitsDashboardPage extends BasePage {
   }
 
   async openEditById(id: string): Promise<void> {
+    if (await this.employeeModal.isOpen()) {
+      await this.employeeModal.cancel();
+    }
+
     const row = await this.findRowById(id);
     await row.locator('.fa-edit').click();
     await this.employeeModal.waitUntilOpen('edit');

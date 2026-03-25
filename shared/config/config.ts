@@ -34,5 +34,6 @@ export const config = {
   browser: {
     headless: process.env.HEADLESS !== 'false',
     slowMo: Number(process.env.SLOW_MO ?? 0),
+    channel: process.env.BROWSER_CHANNEL ?? '',
   },
 } as const;

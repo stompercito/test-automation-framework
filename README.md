@@ -145,7 +145,6 @@ Primary execution is Cucumber (`.feature` + steps).
 | Command | Description |
 |---|---|
 | `npm test` | Run all suites (functional + non-functional) |
-| `npm run test:all` | Run all suites (functional + non-functional) |
 | `npm run test:functional` | Run all functional suites (UI + API) |
 | `npm run test:non-functional` | Run all non-functional suites (Accessibility + Performance) |
 | `npm run test:ui` | Run UI functional suite only |
@@ -153,7 +152,8 @@ Primary execution is Cucumber (`.feature` + steps).
 | `npm run test:api` | Run API functional suite only |
 | `npm run test:smoke` | Run only scenarios tagged with `@smoke` |
 | `npm run test:accessibility` | Run accessibility non-functional suite only |
-| `npm run qa:local` | Local functional run via Cucumber (default headless behavior) |
+| `npm run test:accessibility:headed` | Run accessibility suite with visible browser (`HEADLESS=false`) |
+| `npm run test:performance` | Run performance non-functional suite only |
 
 ---
 

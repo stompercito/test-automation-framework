@@ -9,7 +9,7 @@ Feature: Edit Employee
     Given I am authenticated on the benefits dashboard
     When I edit the existing employee through the UI modal
     Then the employee row should show updated values
-    And the updated employee row should show correct payroll calculations
+    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
 
   @requiresEmployee
   Scenario: [UI-F-006] Cancel edit should not persist changes

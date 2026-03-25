@@ -15,6 +15,16 @@ Given('an employee exists with dependants {int} via API', async function (this: 
   this.trackEmployeeId(response.body.id);
   this.data['selectedEmployeeId'] = response.body.id;
   this.data['selectedEmployeePayload'] = payload;
+
+  // If the dashboard is already open, reload so the just-created employee is reflected in the table.
+  if (this.page && !this.page.isClosed()) {
+    const dashboard = getDashboard(this);
+    const currentUrl = this.page.url().toLowerCase();
+    if (currentUrl.includes('/benefits')) {
+      await this.page.reload();
+      await dashboard.assertLoaded();
+    }
+  }
 });
 
 Then(
@@ -23,6 +33,10 @@ Then(
   const dashboard = getDashboard(this);
   const employeeId = requireSelectedEmployeeId(this);
   const payload = requireSelectedEmployeePayload(this);
+
+  await expect
+    .poll(async () => dashboard.findStructuredRowById(employeeId))
+    .toBeDefined();
 
   const row = await dashboard.findStructuredRowById(employeeId);
   expect(row).toBeDefined();

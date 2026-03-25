@@ -203,17 +203,24 @@ test.describe('Paylocity Benefits Dashboard - UI', () => {
         const dashboard = await loginAndOpenDashboard(page);
         const beforeCount = (await dashboard.readRows()).length;
         const payload = buildEmployeePayload({ dependants: 1 });
+        const allFieldsEmpty = row.input_value.includes('all visible fields empty');
 
-        if (row.input_value.includes('missing firstName')) {
+        if (row.input_value.includes('missing firstName') || allFieldsEmpty) {
           payload.firstName = '';
         }
-        if (row.input_value.includes('missing lastName')) {
+        if (row.input_value.includes('missing lastName') || allFieldsEmpty) {
           payload.lastName = '';
         }
 
         await dashboard.openAddModal();
         await dashboard.employeeModal.fill(payload);
-        await dashboard.employeeModal.submitAdd();
+
+        if (allFieldsEmpty) {
+          await dashboard.employeeModal.dependantsInput.fill('');
+        }
+
+        await expect(dashboard.employeeModal.addButton).toBeVisible();
+        await dashboard.employeeModal.addButton.click();
 
         const afterCount = (await dashboard.readRows()).length;
         const modalStillVisible = await dashboard.employeeModal.modal.isVisible();

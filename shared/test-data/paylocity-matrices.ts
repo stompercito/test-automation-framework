@@ -79,7 +79,7 @@ export function getApiAuthRows(): Array<MatrixRow & { expectedValid: boolean }> 
 }
 
 export function getUiDependantsRows(): MatrixRow[] {
-  return byMatrixId('DDT-UI-DEPENDANTS');
+  return byMatrixId('DDT-UI-DEPENDANTS-INVALID');
 }
 
 export function getUiRequiredRows(): MatrixRow[] {

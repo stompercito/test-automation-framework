@@ -1,15 +1,16 @@
-test_case_id,title,category,area,classification,priority,technique,data_driven,data_matrix_id,preconditions,test_data,gherkin_steps,expected_result,notes
+test_case_id,title,category,area,classification,priority,technique,data_driven,data_matrix_id,preconditions,test_data,gherkin_steps,expected_result,notes,last_execution
 SMK-F-001,"E2E happy path covers add, edit, and delete employee features",Functional,UI,Automatable,High,Use Case / Smoke / E2E,No,,Valid login credentials are configured.,Generate one unique employee record for the full flow.,"Given I am on the Paylocity login page
 When I login with configured credentials
 Then I should see the benefits dashboard
 When I add a new employee through the UI modal
 Then the new employee should be visible in the employee table
-And the created employee row should show correct payroll calculations
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
 And the dashboard should remain in a valid state
 When I open the edit modal for the created employee
 Then the edit modal should show the created employee values
 When I edit the existing employee through the UI modal
 Then the employee row should show updated values
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
 And the dashboard should remain in a valid state
 When I delete the existing employee and confirm
 Then the employee should not be visible in the table by id
@@ -19,7 +20,7 @@ SMK-A-001,"E2E happy path covers create, read, update, and delete employee opera
 When I execute API smoke operation ""<operation>""
 Then API smoke operation ""<operation>"" should return ""<expectedStatus>""
 And API smoke payroll should follow business rules for ""<operation>""
-And I attach API smoke trace for operation ""<operation>"" using ""<method>"" on ""<endpoint>""","Each CRUD smoke operation returns the expected status; payroll business rules are validated for create/read/update; request/response trace is attached.",Smoke should validate the primary API journey quickly without replacing detailed negative coverage.
+And I attach API smoke trace for operation ""<operation>"" using ""<method>"" on ""<endpoint>""",Each CRUD smoke operation returns the expected status; payroll business rules are validated for create/read/update; request/response trace is attached.,Smoke should validate the primary API journey quickly without replacing detailed negative coverage.
 UI-F-001,Dashboard loads and employee table is visible,Functional,UI,Automatable,High,Use Case / Functional Baseline,No,,Valid login/session is available.,,"Given I am authenticated and open the Benefits Dashboard
 When the page finishes loading
 Then the employees table should be visible
@@ -28,11 +29,11 @@ And the page should be usable without console-blocking errors",Dashboard renders
 UI-F-002,Add employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Valid login/session is available.,"Generate unique firstName, lastName, username-compatible seed, dependants=1","Given I am authenticated on the benefits dashboard
 When I add a new employee through the UI modal
 Then the new employee should be visible in the employee table
-And the created employee row should show correct payroll calculations",New employee is created and displayed with correct calculated payroll values.,Cleanup should remove created employee at test end.
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",New employee is created and displayed with correct calculated payroll values.,Cleanup should remove created employee at test end.
 UI-F-003,Edit employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API; update dependants and/or names with unique values,"Given I am authenticated on the benefits dashboard
 When I edit the existing employee through the UI modal
 Then the employee row should show updated values
-And the updated employee row should show correct payroll calculations",Employee data is updated and visible in the table with correct recalculated payroll values.,Preferred setup via API hook to keep test focused on edit.
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Employee data is updated and visible in the table with correct recalculated payroll values.,Preferred setup via API hook to keep test focused on edit.
 UI-F-004,Delete a single employee from UI,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API,"Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Delete for that employee
@@ -66,21 +67,21 @@ When I open the Benefits Dashboard
 Then the table should show the empty-state message",No employees found message is displayed.,May need controlled environment; can be fragile in shared envs or add a clean-up api hook to remove all employees first.
 UI-F-010,Displayed calculations are correct for a known employee record,Functional,UI,Automatable,High,Decision Table / Business Rule,No,,Create employee by API hook with controlled dependants count.,"Dataset by dependants count, e.g. 0, 1, 2, 32","Given an employee exists with a known dependants value
 When I open the Benefits Dashboard
-Then the displayed salary, gross pay, benefits cost, and net pay should match the business rules",Calculated values match expected payroll and benefits calculations.,Best implemented as data-driven by dependants count.
+Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Calculated values match expected payroll and benefits calculations.,Best implemented as data-driven by dependants count.
 UI-F-011,Table headers map to the correct employee values,Functional,UI,Automatable,High,Error Guessing / Data Mapping,No,,Create employee with clearly distinguishable first and last names by API hook.,"Example: firstName='Alpha', lastName='Zulu'","Given an employee exists with distinct first and last names
 When I open the Benefits Dashboard
 Then the value under First Name should be the employee first name
 And the value under Last Name should be the employee last name",Column labels and data mapping are correct.,Important to detect potential UI header-to-cell mapping defects.
-UI-F-012,Create modal rejects invalid dependants values and does not save the employee,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS,Valid session.,"Dataset: dependants values such as -1, 33, 999, text, decimal, and spaces.","Given I am on the Benefits Dashboard
+UI-F-012,Create modal rejects invalid dependants values and does not save the employee,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Valid session.,"Dataset: dependants values such as -1, 33, 999, text, decimal, blank, and spaces.","Given I am on the Benefits Dashboard
 When I open Add Employee
 And I enter valid employee data except for an invalid dependants value
 And I submit the form
 Then the employee should not be created
 And the modal should not complete as a successful save
-And no new employee should appear in the table",Invalid dependants values are rejected during creation and no employee is saved.,Automated assertions should verify failed creation and no persisted record. Missing or unclear user-facing error feedback is covered separately.
-UI-F-013,UI validation for missing required employee fields,Functional,UI,Hybrid,High,Equivalence Partitioning,Yes,DDT-UI-REQ-FIELDS,Valid session.,"Dataset: missing firstName, missing lastName, both missing","Given I am on the Benefits Dashboard
+And no new employee should appear in the table",Invalid dependants values are rejected during creation and no employee is saved. Blank dependants is included and may manifest as a stuck modal or submit timeout instead of a clean inline validation.,Automated assertions should verify failed creation and no persisted record. For blank dependants, treat a blocked save or modal timeout as a valid failure signal until clearer UI feedback exists.
+UI-F-013,UI validation for missing required employee fields,Functional,UI,Hybrid,High,Equivalence Partitioning,Yes,DDT-UI-REQ-FIELDS,Valid session.,"Dataset: missing firstName, missing lastName, all visible fields empty including dependants blank","Given I am on the Benefits Dashboard
 When I attempt to save an employee with missing required data
-Then the system should block save or present a failure consistently",Required field handling is consistent and does not create invalid records.,Use dataset variations for blank or partially completed employee records.
+Then the system should block save or present a failure consistently",Required field handling is consistent and does not create invalid records. For the all-fields-empty case, if the modal stays open and the submit flow times out, that should be treated as a test failure signal rather than a successful save.,Use dataset variations for blank or partially completed employee records. Include observation that dependants blank currently may leave the UI without visible feedback.
 UI-F-014,"Table refreshes after add, edit, and delete actions",Functional,UI,Automatable,Medium,State Transition,No,,Create prerequisite employee for edit/delete portions via API hook as needed.,Unique employee data,"Given I perform add, edit, or delete through the UI
 When each action completes successfully
 Then the table should refresh and show the latest state",Table reflects the latest record state after each CRUD action.,Can become 3 separate tests later.
@@ -109,6 +110,9 @@ When I delete one selected employee from the table
 Then only the selected employee should be removed
 And the remaining employees should still be present
 And the table should remain consistent after the deletion",Delete works correctly in a realistic multi-record scenario without affecting other rows.,More complete delete coverage than the single-record smoke path.
+UI-F-019,Payroll calculations are correct for accepted dependants limits,Functional,UI,Automatable,High,Boundary Value Analysis / Business Rule,Yes,DDT-UI-DEPENDANTS-VALID,Valid login/session is available and employee can be seeded by API hook.,"Accepted dependants dataset: 0, 1, 31, 32","Given I am authenticated on the benefits dashboard
+And an employee exists with dependants <dependants> via API
+Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",For accepted dependants limits," displayed payroll columns match expected business-rule values.",Focuses on valid boundary values where calculation must be correct.
 API-F-001,Create employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Valid Authorization header is available.,"Unique payload with valid firstName, lastName, username, dependants","Given I have a valid employee payload
 When I create the employee via API
 Then the employee is created successfully
@@ -169,14 +173,21 @@ Then each operation should complete within the agreed smoke threshold",CRUD endp
 PERF-NF-003,Repeated CRUD operations remain stable,Non-Functional,Performance,Automatable,Low,Stability,Yes,DDT-PERF-CRUD-REPEAT,Valid Authorization header is available.,"Iteration counts such as 5, 10, 20","Given valid employee payload data
 When I repeat CRUD operations for a defined iteration dataset
 Then the API should remain stable without unexpected failures",Basic repeated usage does not introduce instability.,Keep challenge scope lightweight.
-ACC-NF-001,Keyboard navigation works on dashboard main controls,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Manual Review,No,,Valid session.,,"Given I use only the keyboard
-When I navigate through the Benefits Dashboard
-Then I should be able to reach and understand the main interactive controls",Main controls are reachable and usable by keyboard.,Hybrid because real usability still needs human validation.
-ACC-NF-002,Employee modal focus behavior is usable,Non-Functional,Accessibility,Hybrid,Medium,Accessibility,No,,Valid session.,,"Given I open the employee modal
-When the modal becomes visible
-Then focus should move to a logical control
-And keyboard navigation within the modal should be usable",Modal focus behavior supports keyboard users.,The current script appears to focus firstName when modal opens.
-ACC-NF-003,Labels buttons and icon actions are understandable,Non-Functional,Accessibility,Manual,Medium,Accessibility / UX Review,No,,Valid session.,,"Given I review the dashboard and employee table
+ACC-NF-001,Add employee action is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Valid session.,,"Given I am authenticated on the benefits dashboard
+When I reset keyboard focus to the dashboard
+Then the add employee action should be reachable by keyboard",Add action can be reached using keyboard-only navigation.,Automated keyboard path check.
+ACC-NF-002,Edit action for seeded employee is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Seeded employee prerequisite is available.,Seed one employee by API hook,"Given I am authenticated on the benefits dashboard
+When I reset keyboard focus to the dashboard
+Then the edit action for the seeded employee should be reachable by keyboard",Edit action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.
+ACC-NF-003,Delete action for seeded employee is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Seeded employee prerequisite is available.,Seed one employee by API hook,"Given I am authenticated on the benefits dashboard
+When I reset keyboard focus to the dashboard
+Then the delete action for the seeded employee should be reachable by keyboard",Delete action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.
+ACC-NF-004,Employee add modal accessibility happy path,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Focus Management,No,,Valid session.,,"Given I am authenticated on the benefits dashboard
+When I open add employee modal from dashboard
+Then add and cancel buttons should be visible in the employee modal
+And keyboard navigation should reach employee modal inputs and action buttons
+And employee modal inputs should have non-empty placeholders",Add modal accessibility checks validate modal actions," keyboard reachability"," and placeholder presence without extending into employee creation flow.",Focused on modal accessibility behavior only so failures stop at the relevant UI state.
+ACC-NF-005,Labels buttons and icon actions are understandable,Non-Functional,Accessibility,Manual,Medium,Accessibility / UX Review,No,,Valid session.,,"Given I review the dashboard and employee table
 When I inspect labels, buttons, and icon-only actions
 Then controls should be understandable and not rely on ambiguous visual cues",Users can identify actions without confusion.,Manual because clarity and ambiguity require human judgment.
 UX-NF-001,Employee table remains usable on practical viewport sizes,Non-Functional,UX-Responsive,Manual,High,Responsive Review,Yes,DDT-UX-VIEWPORTS,Dashboard contains at least one record with normal-length values.,"Viewport dataset: 320x640, 768x1024, 1280x800, 1440x900","Given I open the Benefits Dashboard at different viewport sizes

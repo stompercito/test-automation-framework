@@ -21,8 +21,9 @@ Feature: Dashboard Accessibility Hybrid Coverage
     When I reset keyboard focus to the dashboard
     Then the delete action for the seeded employee should be reachable by keyboard
 
-  Scenario: [ACC-NF-004] Employee add modal focus behavior is usable
+  Scenario: [ACC-NF-004] Employee add modal accessibility happy path
     Given I am authenticated on the benefits dashboard
-    When I open add employee modal using only the keyboard
-    Then focus should move to a logical control in the employee modal
-    And keyboard navigation should reach modal action controls
+    When I open add employee modal from dashboard
+    Then add and cancel buttons should be visible in the employee modal
+    And keyboard navigation should reach employee modal inputs and action buttons
+    And employee modal inputs should have non-empty placeholders

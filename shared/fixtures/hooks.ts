@@ -1,4 +1,4 @@
-import { After, Before } from '@cucumber/cucumber';
+import { After, AfterStep, Before } from '@cucumber/cucumber';
 import { chromium, request } from '@playwright/test';
 import { config } from '../config/config';
 import { CustomWorld } from './world';
@@ -6,6 +6,17 @@ import { EmployeesClient } from '../clients/employees.client';
 import { buildEmployeePayload } from '../test-data/employee.builder';
 
 let performanceWarningShown = false;
+
+async function attachFailureScreenshot(world: CustomWorld): Promise<void> {
+  const alreadyAttached = world.data['failureScreenshotAttached'] === true;
+  if (alreadyAttached || !world.page || world.page.isClosed()) {
+    return;
+  }
+
+  const screenshot = await world.page.screenshot({ fullPage: true });
+  await world.attach(screenshot, 'image/png');
+  world.data['failureScreenshotAttached'] = true;
+}
 
 Before(async function (this: CustomWorld) {
   this.apiContext = await request.newContext({
@@ -18,10 +29,26 @@ Before(async function (this: CustomWorld) {
 });
 
 Before({ tags: '@ui' }, async function (this: CustomWorld) {
-  this.browser = await chromium.launch({
+  const launchOptions = {
     headless: config.browser.headless,
     slowMo: config.browser.slowMo,
-  });
+    ...(config.browser.channel ? { channel: config.browser.channel as 'chrome' | 'msedge' } : {}),
+  };
+
+  try {
+    this.browser = await chromium.launch(launchOptions);
+  } catch (error) {
+    if (config.browser.channel) {
+      throw error;
+    }
+
+    // Fallback for environments where bundled headless shell is blocked by OS/security policy.
+    try {
+      this.browser = await chromium.launch({ ...launchOptions, channel: 'msedge' });
+    } catch {
+      this.browser = await chromium.launch({ ...launchOptions, channel: 'chrome' });
+    }
+  }
 
   this.context = await this.browser.newContext({
     baseURL: config.baseUrl,
@@ -74,15 +101,16 @@ Before({ tags: '@performance' }, async function () {
   performanceWarningShown = true;
 });
 
-After({ tags: '@ui' }, async function (this: CustomWorld, scenario) {
-  if (scenario.result?.status === 'FAILED' && this.page && !this.page.isClosed()) {
-    const screenshot = await this.page.screenshot({ fullPage: true });
-    await this.attach(screenshot, 'image/png');
-  }
-
+After({ tags: '@ui' }, async function (this: CustomWorld) {
   await this.page?.close();
   await this.context?.close();
   await this.browser?.close();
+});
+
+AfterStep({ tags: '@ui' }, async function (this: CustomWorld, { result }) {
+  if (result?.status === 'FAILED') {
+    await attachFailureScreenshot(this);
+  }
 });
 
 After(async function (this: CustomWorld) {

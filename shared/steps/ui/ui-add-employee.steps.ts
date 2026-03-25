@@ -2,7 +2,6 @@ import { Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../../fixtures/world';
 import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
-import { calculateCompensation, parseCurrencyLikeValue } from '../../utils/payroll';
 import { getDashboard } from './ui-step-utils';
 
 When('I add a new employee through the UI modal', async function (this: CustomWorld) {
@@ -61,31 +60,6 @@ Then('the new employee should be visible in the employee table', async function 
 
   this.data['selectedEmployeeId'] = matched.id;
   this.data['selectedEmployeePayload'] = payload;
-});
-
-Then('the created employee row should show correct payroll calculations', async function (this: CustomWorld) {
-  const dashboard = getDashboard(this);
-  const payload = this.data['uiCreatedPayload'] as EmployeePayload;
-
-  await expect
-    .poll(async () =>
-      (await dashboard.readRows()).find(
-        (item) => item.firstName === payload.firstName && item.lastName === payload.lastName,
-      ),
-    )
-    .toBeTruthy();
-
-  const matched = (await dashboard.readRows()).find(
-    (item) => item.firstName === payload.firstName && item.lastName === payload.lastName,
-  );
-  if (!matched) {
-    throw new Error('Unable to validate payroll calculations because created row was not found.');
-  }
-
-  const expected = calculateCompensation(payload.dependants);
-  expect(parseCurrencyLikeValue(matched.gross)).toBeCloseTo(expected.grossPerPaycheck, 2);
-  expect(parseCurrencyLikeValue(matched.benefitsCost)).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
-  expect(parseCurrencyLikeValue(matched.net)).toBeCloseTo(expected.netPerPaycheck, 2);
 });
 
 Then('no new employee should be created', async function (this: CustomWorld) {

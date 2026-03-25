@@ -8,7 +8,7 @@ Feature: Add Employee
     Given I am authenticated on the benefits dashboard
     When I add a new employee through the UI modal
     Then the new employee should be visible in the employee table
-    And the created employee row should show correct payroll calculations
+    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
 
   Scenario: [UI-F-006] Cancel add should not persist new record
     Given I am authenticated on the benefits dashboard
