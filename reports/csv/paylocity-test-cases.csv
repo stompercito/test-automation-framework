@@ -72,13 +72,13 @@ UI-F-011,Table headers map to the correct employee values,Functional,UI,Automata
 When I open the Benefits Dashboard
 Then the value under First Name should be the employee first name
 And the value under Last Name should be the employee last name",Column labels and data mapping are correct.,Important to detect potential UI header-to-cell mapping defects.
-UI-F-012,Create modal rejects invalid dependants values and does not save the employee,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Valid session.,"Dataset: dependants values such as -1, 33, 999, text, decimal, blank, and spaces.","Given I am on the Benefits Dashboard
+UI-F-012,Add employee modal rejects invalid dependants values and does not save the employee,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Valid session.,"Dataset: negative dependants, above-max dependants, decimal dependants, text dependants, blank dependants, and spaces-only dependants.","Given I am on the Benefits Dashboard
 When I open Add Employee
 And I enter valid employee data except for an invalid dependants value
 And I submit the form
 Then the employee should not be created
 And the modal should not complete as a successful save
-And no new employee should appear in the table",Invalid dependants values are rejected during creation and no employee is saved. Blank dependants is included and may manifest as a stuck modal or submit timeout instead of a clean inline validation.,Automated assertions should verify failed creation and no persisted record. For blank dependants, treat a blocked save or modal timeout as a valid failure signal until clearer UI feedback exists.
+And no new employee should appear in the table",Invalid dependants values are rejected during creation and no employee is saved. Blank or negative dependants may manifest as a stuck modal or submit timeout instead of a clean inline validation.,Automated assertions should verify failed creation and no persisted record. For blank or negative dependants, treat a blocked save or modal timeout as a valid failure signal and log it as a UI issue.
 UI-F-013,UI validation for missing required employee fields,Functional,UI,Hybrid,High,Equivalence Partitioning,Yes,DDT-UI-REQ-FIELDS,Valid session.,"Dataset: missing firstName, missing lastName, all visible fields empty including dependants blank","Given I am on the Benefits Dashboard
 When I attempt to save an employee with missing required data
 Then the system should block save or present a failure consistently",Required field handling is consistent and does not create invalid records. For the all-fields-empty case, if the modal stays open and the submit flow times out, that should be treated as a test failure signal rather than a successful save.,Use dataset variations for blank or partially completed employee records. Include observation that dependants blank currently may leave the UI without visible feedback.
@@ -92,14 +92,14 @@ Then the modal should show the correct id
 And the first name should match the selected employee
 And the last name should match the selected employee
 And the dependants value should match the selected employee",Edit opens with the exact data for the selected employee and is ready for update.,Important because the same modal is reused and row-to-column mapping may be incorrect.
-UI-F-016,Edit modal rejects invalid dependants values and does not save the changes,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,,Create prerequisite employee by API hook before opening the dashboard.,"Dataset: dependants values such as -1, 33, 999, text, decimal, and spaces.","Given an employee exists in the system
+UI-F-016,Edit modal rejects invalid dependants values and does not save the changes,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Create prerequisite employee by API hook before opening the dashboard.,"Dataset: negative dependants, above-max dependants, decimal dependants, text dependants, blank dependants, and spaces-only dependants.","Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Edit for that employee
 And I replace dependants with an invalid value
 And I submit the form
 Then the employee should not be updated with the invalid value
 And the modal should not complete as a successful save
-And the previously persisted employee data should remain unchanged",Invalid dependants values are rejected during edit and no invalid update is saved.,Automated assertions should verify failed update and unchanged persisted data. Missing or unclear user-facing error feedback is covered separately.
+And the previously persisted employee data should remain unchanged",Invalid dependants values are rejected during edit and no invalid update is saved. Blank or negative dependants may manifest as a stuck modal or submit timeout instead of a clean inline validation.,Automated assertions should verify failed update and unchanged persisted data. For blank or negative dependants, treat a blocked save or modal timeout as a valid failure signal and log it as a UI issue.
 UI-F-017,UI shows visible feedback when save fails due to invalid data,Functional,UI,Hybrid,High,Error Guessing / UX Validation,Yes,,Valid session. Use invalid create or edit datasets that the API rejects.,Dataset may reuse invalid dependants values and other invalid form combinations.,"Given I am on the Benefits Dashboard
 When I try to save employee data that the API rejects
 Then the UI should show a visible and understandable error message
@@ -113,6 +113,21 @@ And the table should remain consistent after the deletion",Delete works correctl
 UI-F-019,Payroll calculations are correct for accepted dependants limits,Functional,UI,Automatable,High,Boundary Value Analysis / Business Rule,Yes,DDT-UI-DEPENDANTS-VALID,Valid login/session is available and employee can be seeded by API hook.,"Accepted dependants dataset: 0, 1, 31, 32","Given I am authenticated on the benefits dashboard
 And an employee exists with dependants <dependants> via API
 Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",For accepted dependants limits," displayed payroll columns match expected business-rule values.",Focuses on valid boundary values where calculation must be correct.
+UI-F-020,Add employee modal rejects invalid firstName or lastName values and does not persist them to visible name fields,Functional,UI,Automatable,High,Equivalence Partitioning / Error Guessing,Yes,DDT-UI-NAME-INVALID,Valid session.,"Dataset: numeric-only names, blank names, spaces-only names, selected mixed alphanumeric names, and names over 50 characters.","Given I am on the Benefits Dashboard
+When I open Add Employee
+And I enter employee data using an invalid firstName or lastName variation
+And I submit the form
+Then the employee should not be created or should be flagged as a defect if created
+And invalid name values should not appear as accepted visible employee names in the table
+And firstName and lastName values should not appear under the wrong headers",Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries are rejected or clearly surfaced as defects if the UI allows them to save. Visible table mapping must still keep firstName under First Name and lastName under Last Name.,Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.
+UI-F-021,Add employee modal accepts valid boundary values and persists them correctly,Functional,UI,Automatable,High,Boundary Value Analysis,Yes,DDT-UI-ADD-VALID-BOUNDARIES,Valid session.,"Dataset: minimum valid names with minimum dependants, maximum valid names with maximum dependants, and representative valid edge combinations.","Given I am on the Benefits Dashboard
+When I open Add Employee
+And I enter employee data using a valid boundary variation
+And I submit the form
+Then the employee should be created successfully
+And firstName and lastName should be visible under the correct headers
+And dependants should be saved with the expected boundary value
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Valid boundary inputs in the add modal are accepted and persisted correctly without swapping name columns or miscomputing payroll.,Use readable dataset names in automation output instead of raw generated values so edge-case failures are easy to understand.
 API-F-001,Create employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Valid Authorization header is available.,"Unique payload with valid firstName, lastName, username, dependants","Given I have a valid employee payload
 When I create the employee via API
 Then the employee is created successfully
@@ -164,6 +179,10 @@ And I update the employee
 And I retrieve the employee again
 And I delete the employee
 Then each operation should reflect the correct current state",CRUD chain is internally consistent across API operations.,Strong regression anchor.
+API-F-015,API rejects invalid firstName or lastName values or exposes them as defects if accepted,Functional,API,Automatable,High,Equivalence Partitioning / Error Guessing,Yes,DDT-API-NAME-INVALID,Valid Authorization header is available.,"Dataset: numeric-only names, blank names, spaces-only names, selected mixed alphanumeric names, and names over 50 characters.","Given a valid Authorization header
+When I submit employee payloads using invalid name variations
+Then the API should reject invalid name values consistently or the test should flag accepted invalid names as defects
+And firstName and lastName should remain mapped to the correct response properties",Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries are rejected or clearly detected as defects if the API accepts them. Response mapping must keep firstName and lastName in the correct properties.,Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.
 PERF-NF-001,Get employees endpoint responds within acceptable threshold,Non-Functional,Performance,Automatable,Medium,Performance Smoke,No,,Valid Authorization header is available.,,"Given a valid Authorization header
 When I request the employee list
 Then the response time should remain within the agreed smoke threshold",Endpoint performance is acceptable for smoke validation.,Threshold can be set by project convention.

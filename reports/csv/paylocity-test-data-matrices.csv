@@ -3,16 +3,34 @@ DDT-UI-CALCULATIONS,UI-F-011,UI calculations by dependant count,dependants,busin
 DDT-UI-CALCULATIONS,UI-F-011,UI calculations by dependant count,dependants,business-rule,1 dependant,benefits increase by one dependant cost
 DDT-UI-CALCULATIONS,UI-F-011,UI calculations by dependant count,dependants,business-rule,2 dependants,benefits increase by two dependant costs
 DDT-UI-CALCULATIONS,UI-F-011,UI calculations by dependant count,dependants,business-rule,32 dependants,maximum valid dependant scenario calculates correctly
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,-1,rejected
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,33,rejected
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,1.5,rejected or blocked
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,abc,rejected or blocked
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,blank,rejected or blocked
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,spaces,rejected or blocked
-DDT-UI-DEPENDANTS-INVALID,UI-F-013;UI-F-014;UI-F-015,UI invalid dependants on create/edit,dependants,invalid-input,3abc,rejected or blocked
-DDT-UI-REQ-FIELDS,UI-F-016,UI required field checks,firstName/lastName,required-field,firstName missing,save blocked or rejected
-DDT-UI-REQ-FIELDS,UI-F-016,UI required field checks,firstName/lastName,required-field,lastName missing,save blocked or rejected
-DDT-UI-REQ-FIELDS,UI-F-016,UI required field checks,firstName/lastName,required-field,all visible fields empty,save blocked or rejected
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,negative dependants,rejected
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,dependants above max,rejected
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,decimal dependants,rejected or blocked
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,text dependants,rejected or blocked
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,blank dependants,rejected or blocked
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,spaces only dependants,rejected or blocked
+DDT-UI-DEPENDANTS-INVALID,UI-F-012;UI-F-016,UI invalid dependants on create/edit,dependants,invalid-input,mixed dependants text,rejected or blocked
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field checks,firstName/lastName,required-field,firstName missing,save blocked or rejected
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field checks,firstName/lastName,required-field,lastName missing,save blocked or rejected
+DDT-UI-REQ-FIELDS,UI-F-013,UI required field checks,firstName/lastName/dependants,required-field,all visible fields empty,save blocked or rejected
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid numeric names on create,firstName/lastName,invalid-input,firstName numeric only,rejected or observed as defect if saved
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid numeric names on create,firstName/lastName,invalid-input,lastName numeric only,rejected or observed as defect if saved
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid numeric names on create,firstName/lastName,invalid-input,both names numeric only,rejected or observed as defect if saved
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,firstName blank,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,lastName blank,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,both names blank,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,firstName spaces only,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,lastName spaces only,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,both names spaces only,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,firstName mixed alphanumeric,observed behavior; flag as defect if accepted unexpectedly
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,lastName mixed alphanumeric,observed behavior; flag as defect if accepted unexpectedly
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,firstName over 50 chars,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,lastName over 50 chars,rejected or blocked
+DDT-UI-NAME-INVALID,UI-F-020,UI invalid name values on create,firstName/lastName,invalid-input,both names over 50 chars,rejected or blocked
+DDT-UI-ADD-VALID-BOUNDARIES,UI-F-021,UI add modal valid boundaries,firstName/lastName/dependants,valid-boundary,min names and min dependants,accepted and saved correctly
+DDT-UI-ADD-VALID-BOUNDARIES,UI-F-021,UI add modal valid boundaries,firstName/lastName/dependants,valid-boundary,max names and max dependants,accepted and saved correctly
+DDT-UI-ADD-VALID-BOUNDARIES,UI-F-021,UI add modal valid boundaries,firstName/lastName/dependants,valid-boundary,typical names and zero dependants,accepted and saved correctly
+DDT-UI-ADD-VALID-BOUNDARIES,UI-F-021,UI add modal valid boundaries,firstName/lastName/dependants,valid-boundary,typical names and max dependants,accepted and saved correctly
 DDT-API-REQ-FIELDS,API-F-006,API required fields,firstName/lastName/username,required-field,missing firstName,rejected
 DDT-API-REQ-FIELDS,API-F-006,API required fields,firstName/lastName/username,required-field,missing lastName,rejected
 DDT-API-REQ-FIELDS,API-F-006,API required fields,firstName/lastName/username,required-field,missing username,rejected
@@ -28,6 +46,20 @@ DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/use
 DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length-boundary,username length 0,rejected or business-invalid
 DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length-boundary,username length 50,accepted
 DDT-API-STRING-LEN,API-F-007,API string length boundaries,firstName/lastName/username,length-boundary,username length 51,rejected
+DDT-API-NAME-INVALID,API-F-015,API invalid numeric names,firstName/lastName,invalid-input,firstName numeric only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid numeric names,firstName/lastName,invalid-input,lastName numeric only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid numeric names,firstName/lastName,invalid-input,both names numeric only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,firstName blank,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,lastName blank,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,both names blank,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,firstName spaces only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,lastName spaces only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,both names spaces only,rejected or observed as defect if accepted
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,firstName mixed alphanumeric,observed behavior; flag as defect if accepted unexpectedly
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,lastName mixed alphanumeric,observed behavior; flag as defect if accepted unexpectedly
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,firstName over 50 chars,rejected
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,lastName over 50 chars,rejected
+DDT-API-NAME-INVALID,API-F-015,API invalid name values,firstName/lastName,invalid-input,both names over 50 chars,rejected
 DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,-1,rejected
 DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,0,accepted
 DDT-API-DEPENDANTS,API-F-008,API dependants boundaries,dependants,boundary,1,accepted

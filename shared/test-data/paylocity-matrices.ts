@@ -85,3 +85,15 @@ export function getUiDependantsRows(): MatrixRow[] {
 export function getUiRequiredRows(): MatrixRow[] {
   return byMatrixId('DDT-UI-REQ-FIELDS');
 }
+
+export function getUiInvalidNameRows(): MatrixRow[] {
+  return byMatrixId('DDT-UI-NAME-INVALID');
+}
+
+export function getUiAddValidBoundaryRows(): MatrixRow[] {
+  return byMatrixId('DDT-UI-ADD-VALID-BOUNDARIES');
+}
+
+export function getApiInvalidNameRows(): MatrixRow[] {
+  return byMatrixId('DDT-API-NAME-INVALID');
+}
