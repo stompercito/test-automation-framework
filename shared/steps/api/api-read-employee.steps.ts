@@ -1,7 +1,8 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { buildEmployeePayload } from '../../test-data/employee.builder';
+import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
 import { CustomWorld } from '../../fixtures/world';
+import { calculateCompensation } from '../../utils/payroll';
 import { getClient } from './api-step-utils';
 
 Given('an employee exists via API', async function (this: CustomWorld) {
@@ -38,4 +39,18 @@ Then('the employee by id response should match seeded employee', async function 
   const response = this.data['response'] as { status: number; body: { id: string } };
   expect(response.status).toBe(200);
   expect(response.body.id).toBe(this.data['existingEmployeeId']);
+});
+
+Then('the employee by id payroll should match business rules', async function (this: CustomWorld) {
+  const response = this.data['response'] as {
+    status: number;
+    body: { gross: number; benefitsCost: number; net: number };
+  };
+  const payload = this.data['existingEmployeePayload'] as EmployeePayload;
+  const expected = calculateCompensation(payload.dependants);
+
+  expect(response.status).toBe(200);
+  expect(response.body.gross).toBeCloseTo(expected.grossPerPaycheck, 2);
+  expect(response.body.benefitsCost).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+  expect(response.body.net).toBeCloseTo(expected.netPerPaycheck, 2);
 });

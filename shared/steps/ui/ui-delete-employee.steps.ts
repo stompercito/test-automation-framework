@@ -33,3 +33,8 @@ Then('the employee should remain visible in the table by id', async function (th
   await expect.poll(async () => dashboard.findStructuredRowById(employeeId)).toBeDefined();
 });
 
+Then('the table should show no employees message', async function (this: CustomWorld) {
+  const dashboard = getDashboard(this);
+  await expect.poll(async () => dashboard.hasNoEmployeesMessage()).toBeTruthy();
+});
+

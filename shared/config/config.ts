@@ -1,5 +1,9 @@
 import 'dotenv/config';
 
+function ensureTrailingSlash(url: string): string {
+  return url.endsWith('/') ? url : `${url}/`;
+}
+
 /**
  * Generic framework configuration.
  * App-specific behavior should stay outside this file.
@@ -7,7 +11,9 @@ import 'dotenv/config';
 export const config = {
   baseUrl:
     process.env.BASE_URL ?? 'https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod/Account/Login',
-  apiBaseUrl: process.env.API_BASE_URL ?? 'https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod',
+  apiBaseUrl: ensureTrailingSlash(
+    process.env.API_BASE_URL ?? 'https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod',
+  ),
 
   credentials: {
     username: process.env.PAYLOCITY_USERNAME ?? process.env.TEST_USERNAME ?? 'test_user',
@@ -16,8 +22,6 @@ export const config = {
 
   apiAuth: {
     token: process.env.API_AUTH_TOKEN ?? '',
-    username: process.env.API_AUTH_USERNAME ?? '',
-    password: process.env.API_AUTH_PASSWORD ?? '',
   },
 
   environment: (process.env.ENVIRONMENT ?? 'local') as 'local' | 'staging' | 'production',

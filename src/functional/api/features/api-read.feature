@@ -13,6 +13,7 @@ Feature: Employees API Read
     Given an employee exists via API
     When I request employee by id
     Then the employee by id response should match seeded employee
+    And the employee by id payroll should match business rules
 
   Scenario Outline: [API-F-009] Invalid UUID handling for get
     Given I use invalid employee id "<invalidId>"

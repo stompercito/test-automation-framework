@@ -2,6 +2,7 @@ import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
 import { CustomWorld } from '../../fixtures/world';
+import { calculateCompensation } from '../../utils/payroll';
 import { getClient } from './api-step-utils';
 
 Given('I have a valid employee payload', async function (this: CustomWorld) {
@@ -117,3 +118,38 @@ Then('expiration handling outcome should be {string}', async function (this: Cus
 
   expect(response.status).toBeGreaterThanOrEqual(400);
 });
+
+Then('the created employee payroll should match business rules', async function (this: CustomWorld) {
+  const response = this.data['response'] as {
+    status: number;
+    body: { gross: number; benefitsCost: number; net: number };
+  };
+  const payload = this.data['employeePayload'] as EmployeePayload;
+  const expected = calculateCompensation(payload.dependants);
+
+  expect(response.status).toBe(200);
+  expect(response.body.gross).toBeCloseTo(expected.grossPerPaycheck, 2);
+  expect(response.body.benefitsCost).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+  expect(response.body.net).toBeCloseTo(expected.netPerPaycheck, 2);
+});
+
+Then(
+  'payroll business rules should be respected for dependants outcome {string}',
+  async function (this: CustomWorld, outcome: string) {
+    if (outcome !== 'accepted') {
+      return;
+    }
+
+    const response = this.data['response'] as {
+      status: number;
+      body: { gross: number; benefitsCost: number; net: number };
+    };
+    const payload = this.data['employeePayload'] as EmployeePayload;
+    const expected = calculateCompensation(payload.dependants);
+
+    expect(response.status).toBe(200);
+    expect(response.body.gross).toBeCloseTo(expected.grossPerPaycheck, 2);
+    expect(response.body.benefitsCost).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+    expect(response.body.net).toBeCloseTo(expected.netPerPaycheck, 2);
+  },
+);

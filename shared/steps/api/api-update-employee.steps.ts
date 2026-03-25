@@ -2,6 +2,7 @@ import { Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
 import { CustomWorld } from '../../fixtures/world';
+import { calculateCompensation } from '../../utils/payroll';
 import { getClient } from './api-step-utils';
 
 When('I update the seeded employee with valid data', async function (this: CustomWorld) {
@@ -60,4 +61,17 @@ Then('each API operation should return expected statuses', async function (this:
   expect(this.data['crudGetAfterStatus']).toBe(200);
   expect([200, 204]).toContain(this.data['crudDeleteStatus'] as number);
   expect([400, 404]).toContain(this.data['crudGetAfterDeleteStatus'] as number);
+});
+
+Then('updated employee payroll should match business rules', async function (this: CustomWorld) {
+  const client = getClient(this);
+  const id = this.data['existingEmployeeId'] as string;
+  const updated = this.data['updatedPayload'] as EmployeePayload;
+  const expected = calculateCompensation(updated.dependants);
+
+  const getResponse = await client.getById(id);
+  expect(getResponse.status).toBe(200);
+  expect(getResponse.body.gross).toBeCloseTo(expected.grossPerPaycheck, 2);
+  expect(getResponse.body.benefitsCost).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+  expect(getResponse.body.net).toBeCloseTo(expected.netPerPaycheck, 2);
 });

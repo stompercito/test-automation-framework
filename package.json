@@ -5,20 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test:all",
-    "test:all": "npm run test:functional && npm run test:non-functional",
-    "qa:local": "cross-env HEADLESS=false PW_VIDEO_MODE=on npm run test:functional",
     "test:functional": "npx cucumber-js --config cucumber.config.js",
     "test:non-functional": "npx cucumber-js --config cucumber.config.js --profile nonfunctional",
-    "test:ui": "npx cucumber-js --config cucumber.config.js --profile ui",
     "test:api": "npx cucumber-js --config cucumber.config.js --profile api",
+    "test:ui": "npx cucumber-js --config cucumber.config.js --profile ui",
+    "test:ui:headed": "cross-env HEADLESS=false npm run test:ui",
     "test:accessibility": "npx cucumber-js --config cucumber.config.js --profile accessibility",
+    "test:accessibility:headed": "cross-env HEADLESS=false npm run test:accessibility",
     "test:performance": "npx cucumber-js --config cucumber.config.js --profile performance",
-    "test:smoke": "npx cucumber-js --config cucumber.config.js --profile smoke",
-    "test:regression": "npx cucumber-js --config cucumber.config.js --profile regression",
-    "report:open": "npx playwright show-report reports/playwright-html",
-    "report:allure:generate": "npx allure generate reports/allure-results --clean -o reports/allure-report",
-    "report:allure:open": "npx allure open reports/allure-report",
-    "report:allure": "npm run report:allure:generate && npm run report:allure:open"
+    "test:smoke": "npx cucumber-js --config cucumber.config.js --tags \"@smoke\"",
+    "report:cucumber:open": "start reports\\html\\cucumber-report.html"
   },
   "repository": {
     "type": "git",

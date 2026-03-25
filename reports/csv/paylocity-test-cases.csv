@@ -1,42 +1,38 @@
 test_case_id,title,category,area,classification,priority,technique,data_driven,data_matrix_id,preconditions,test_data,gherkin_steps,expected_result,notes
-SMK-F-001,"E2E happy path covers add, edit, and delete employee features",Functional,UI,Automatable,High,Use Case / Smoke / E2E,No,,Valid login/session is available.,Generate one unique employee record for the full flow.,"Given I am authenticated and open the Benefits Dashboard
-When I open Add Employee
-Then the modal should open with empty inputs
-When I create a valid employee
-Then the employee should appear in the table with correct calculations
-When I open Edit for that employee
-Then the modal should show the selected employee data
-When I update the employee with valid changes
-Then the table should reflect the updated values
-When I delete that employee
-Then the employee should be removed from the table","The main happy path flow succeeds end to end for add, edit, and delete features.",Smoke should stay simple and fast. Covers the primary user journey only.
-SMK-A-001,"E2E happy path covers create, read, update, and delete employee operations",Functional,API,Automatable,High,Use Case / Smoke / E2E,No,,Valid API authentication is available.,Generate one unique valid employee payload for the full flow.,"Given I have a valid employee payload
-When I create the employee via API
-Then the employee is created successfully
-When I request employee by id
-Then the employee by id response should match seeded employee
-When I update the seeded employee with valid data
-Then updated employee data should be persisted
-When I delete the seeded employee by id
-Then the deleted employee should no longer be retrievable","The main API happy path succeeds end to end across CRUD operations.",Smoke should validate the primary API journey quickly without replacing detailed negative coverage.
+SMK-F-001,"E2E happy path covers add, edit, and delete employee features",Functional,UI,Automatable,High,Use Case / Smoke / E2E,No,,Valid login credentials are configured.,Generate one unique employee record for the full flow.,"Given I am on the Paylocity login page
+When I login with configured credentials
+Then I should see the benefits dashboard
+When I add a new employee through the UI modal
+Then the new employee should be visible in the employee table
+And the created employee row should show correct payroll calculations
+And the dashboard should remain in a valid state
+When I open the edit modal for the created employee
+Then the edit modal should show the created employee values
+When I edit the existing employee through the UI modal
+Then the employee row should show updated values
+And the dashboard should remain in a valid state
+When I delete the existing employee and confirm
+Then the employee should not be visible in the table by id
+And the table should show no employees message
+And the dashboard should remain in a valid state","The main happy path flow succeeds end to end for add, edit, and delete features, including payroll calculations and final empty state validation.",Smoke should stay simple and fast. Covers the primary user journey only.
+SMK-A-001,"E2E happy path covers create, read, update, and delete employee operations",Functional,API,Automatable,High,Use Case / Smoke / E2E,No,,Valid API authentication is available.,"Examples: create POST /api/Employees (200), read GET /api/Employees/{id} (200), update PUT /api/Employees (200), delete DELETE /api/Employees/{id} (200/204).","Given API smoke prerequisites are ready for ""<operation>""
+When I execute API smoke operation ""<operation>""
+Then API smoke operation ""<operation>"" should return ""<expectedStatus>""
+And API smoke payroll should follow business rules for ""<operation>""
+And I attach API smoke trace for operation ""<operation>"" using ""<method>"" on ""<endpoint>""","Each CRUD smoke operation returns the expected status; payroll business rules are validated for create/read/update; request/response trace is attached.",Smoke should validate the primary API journey quickly without replacing detailed negative coverage.
 UI-F-001,Dashboard loads and employee table is visible,Functional,UI,Automatable,High,Use Case / Functional Baseline,No,,Valid login/session is available.,,"Given I am authenticated and open the Benefits Dashboard
 When the page finishes loading
 Then the employees table should be visible
 And the Add Employee button should be visible
 And the page should be usable without console-blocking errors",Dashboard renders successfully with main controls available.,Moved to detailed/validation coverage after introducing E2E smoke flow.
-UI-F-002,Add employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Valid login/session is available.,"Generate unique firstName, lastName, username-compatible seed, dependants=1","Given I am on the Benefits Dashboard
-When I open Add Employee
-And I enter valid employee data
-And I submit the form
-Then the employee should be saved
-And the employee should appear in the table
-And the displayed calculations should be correct",New employee is created and displayed with correct calculated values.,Cleanup should remove created employee at test end.
-UI-F-003,Edit employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API; update dependants and/or names with unique values,"Given an employee exists in the system
-And I am on the Benefits Dashboard
-When I open Edit for that employee
-And I update the employee data
-And I save the changes
-Then the table should reflect the updated values",Employee data is updated and visible in the table.,Preferred setup via API hook to keep test focused on edit.
+UI-F-002,Add employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Valid login/session is available.,"Generate unique firstName, lastName, username-compatible seed, dependants=1","Given I am authenticated on the benefits dashboard
+When I add a new employee through the UI modal
+Then the new employee should be visible in the employee table
+And the created employee row should show correct payroll calculations",New employee is created and displayed with correct calculated payroll values.,Cleanup should remove created employee at test end.
+UI-F-003,Edit employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API; update dependants and/or names with unique values,"Given I am authenticated on the benefits dashboard
+When I edit the existing employee through the UI modal
+Then the employee row should show updated values
+And the updated employee row should show correct payroll calculations",Employee data is updated and visible in the table with correct recalculated payroll values.,Preferred setup via API hook to keep test focused on edit.
 UI-F-004,Delete a single employee from UI,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API,"Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Delete for that employee
@@ -113,21 +109,22 @@ When I delete one selected employee from the table
 Then only the selected employee should be removed
 And the remaining employees should still be present
 And the table should remain consistent after the deletion",Delete works correctly in a realistic multi-record scenario without affecting other rows.,More complete delete coverage than the single-record smoke path.
-API-F-001,Create employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Valid Authorization header is available.,"Unique payload with valid firstName, lastName, username, dependants","Given a valid Authorization header
-When I send a POST request with a valid employee payload
-Then the employee should be created successfully
-And the response should contain the created employee data",API creates employee successfully and returns valid contract data.,Cleanup should delete created employee.
+API-F-001,Create employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Valid Authorization header is available.,"Unique payload with valid firstName, lastName, username, dependants","Given I have a valid employee payload
+When I create the employee via API
+Then the employee is created successfully
+And the created employee payroll should match business rules",API creates employee successfully and returns payroll values matching business rules.,Cleanup should delete created employee.
 API-F-002,Get all employees returns a valid list,Functional,API,Automatable,High,Use Case / Functional Baseline,No,,Valid Authorization header is available.,,"Given a valid Authorization header
 When I send a GET request for all employees
 Then the API should return a successful response
 And the response body should be a list of employees",Employee list endpoint is reachable and returns the expected collection shape.,Detailed functional coverage after introducing API E2E smoke flow.
-API-F-003,Get employee by valid id,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id,"Given an employee exists
-When I send a GET request using that employee id
-Then the API should return the matching employee record",GET by id returns the correct employee.,Cleanup should delete employee after test.
-API-F-004,Update employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id plus updated valid values,"Given an employee exists
-When I send a PUT request with valid updated employee data
-Then the employee should be updated successfully
-And a later read should show the updated values",API updates employee and persists the new values.,Cleanup should delete employee after test.
+API-F-003,Get employee by valid id,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id,"Given an employee exists via API
+When I request employee by id
+Then the employee by id response should match seeded employee
+And the employee by id payroll should match business rules",GET by id returns the correct employee and payroll values matching business rules.,Cleanup should delete employee after test.
+API-F-004,Update employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id plus updated valid values,"Given an employee exists via API
+When I update the seeded employee with valid data
+Then updated employee data should be persisted
+And updated employee payroll should match business rules",API updates employee and persists new values with correct recalculated payroll fields.,Cleanup should delete employee after test.
 API-F-005,Delete employee by valid id,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id,"Given an employee exists
 When I send a DELETE request using that employee id
 Then the employee should be deleted successfully

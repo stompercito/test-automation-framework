@@ -9,6 +9,7 @@ Feature: Edit Employee
     Given I am authenticated on the benefits dashboard
     When I edit the existing employee through the UI modal
     Then the employee row should show updated values
+    And the updated employee row should show correct payroll calculations
 
   @requiresEmployee
   Scenario: [UI-F-006] Cancel edit should not persist changes

@@ -217,7 +217,7 @@ test.describe('Paylocity Employees API', () => {
         const { api, employees } = await getClient();
 
         if (row.resolvedId === '') {
-          const raw = await api.get('/api/Employees/');
+          const raw = await api.get('api/Employees/');
           expect(raw.status()).toBeGreaterThanOrEqual(400);
         } else {
           const response = await employees.getById(row.resolvedId);
@@ -283,22 +283,18 @@ test.describe('Paylocity Employees API', () => {
         let status: number;
 
         if (row.input_value === 'missing header') {
-          const response = await employees.getAll({ token: '', username: '', password: '' });
+          const response = await employees.getAll({ token: '' });
           status = response.status;
         } else if (row.input_value === 'invalid token') {
           const response = await employees.getAll({ token: 'invalid-token-value' });
           status = response.status;
         } else if (row.input_value === 'wrong auth scheme') {
-          const response = await api.get('/api/Employees', {
+          const response = await api.get('api/Employees', {
             headers: { Authorization: 'Digest invalid' },
           });
           status = response.status();
         } else {
-          const response = await employees.getAll({
-            token: '',
-            username: config.credentials.username,
-            password: config.credentials.password,
-          });
+          const response = await employees.getAll();
           status = response.status;
         }
 

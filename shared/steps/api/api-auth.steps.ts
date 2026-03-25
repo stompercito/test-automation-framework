@@ -1,6 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { config } from '../../config/config';
 import { CustomWorld } from '../../fixtures/world';
 import { getClient } from './api-step-utils';
 
@@ -13,7 +12,7 @@ When('I request all employees with the selected auth variation', async function 
   const client = getClient(this);
 
   if (variation === 'missing') {
-    this.data['response'] = await client.getAll({ token: '', username: '', password: '' });
+    this.data['response'] = await client.getAll({ token: '' });
     return;
   }
 
@@ -23,18 +22,14 @@ When('I request all employees with the selected auth variation', async function 
   }
 
   if (variation === 'wrong-scheme') {
-    const raw = await this.apiContext.get('/api/Employees', {
+    const raw = await this.apiContext.get('api/Employees', {
       headers: { Authorization: 'Digest invalid' },
     });
     this.data['response'] = { status: raw.status(), body: await raw.text() };
     return;
   }
 
-  this.data['response'] = await client.getAll({
-    token: '',
-    username: config.credentials.username,
-    password: config.credentials.password,
-  });
+  this.data['response'] = await client.getAll();
 });
 
 Then('auth outcome should be {string}', async function (this: CustomWorld, outcome: string) {

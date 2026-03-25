@@ -2,6 +2,7 @@ import { Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../../fixtures/world';
 import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
+import { calculateCompensation, parseCurrencyLikeValue } from '../../utils/payroll';
 import { getDashboard, requireSelectedEmployeeId, requireSelectedEmployeePayload } from './ui-step-utils';
 
 When('I edit the existing employee through the UI modal', async function (this: CustomWorld) {
@@ -9,7 +10,10 @@ When('I edit the existing employee through the UI modal', async function (this: 
   const employeeId = requireSelectedEmployeeId(this);
   const updated = buildEmployeePayload({ dependants: 3 });
 
-  await dashboard.openEditById(employeeId);
+  const modalAlreadyOpen = await dashboard.employeeModal.isOpen();
+  if (!modalAlreadyOpen) {
+    await dashboard.openEditById(employeeId);
+  }
   await dashboard.employeeModal.fill(updated);
   await dashboard.employeeModal.submitUpdate();
 
@@ -49,11 +53,50 @@ When('I open the edit modal for the created employee', async function (this: Cus
 
 Then('the employee row should show updated values', async function (this: CustomWorld) {
   const dashboard = getDashboard(this);
+  const employeeId = requireSelectedEmployeeId(this);
   const updated = this.data['updatedEmployeePayload'] as EmployeePayload;
 
   await expect
     .poll(async () => dashboard.isEmployeeVisibleByFullName(updated.firstName, updated.lastName))
     .toBeTruthy();
+
+  await expect
+    .poll(async () => dashboard.findStructuredRowById(employeeId))
+    .toBeDefined();
+
+  const row = await dashboard.findStructuredRowById(employeeId);
+  if (!row) {
+    throw new Error('Updated employee row was not found by id after edit.');
+  }
+
+  expect(row.firstName).toBe(updated.firstName);
+  expect(row.lastName).toBe(updated.lastName);
+  expect(row.dependants).toBe(String(updated.dependants));
+
+  const expected = calculateCompensation(updated.dependants);
+  expect(parseCurrencyLikeValue(row.gross)).toBeCloseTo(expected.grossPerPaycheck, 2);
+  expect(parseCurrencyLikeValue(row.benefitsCost)).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+  expect(parseCurrencyLikeValue(row.net)).toBeCloseTo(expected.netPerPaycheck, 2);
+});
+
+Then('the updated employee row should show correct payroll calculations', async function (this: CustomWorld) {
+  const dashboard = getDashboard(this);
+  const employeeId = requireSelectedEmployeeId(this);
+  const updated = this.data['updatedEmployeePayload'] as EmployeePayload;
+
+  await expect
+    .poll(async () => dashboard.findStructuredRowById(employeeId))
+    .toBeDefined();
+
+  const row = await dashboard.findStructuredRowById(employeeId);
+  if (!row) {
+    throw new Error('Updated employee row was not found by id for payroll validation.');
+  }
+
+  const expected = calculateCompensation(updated.dependants);
+  expect(parseCurrencyLikeValue(row.gross)).toBeCloseTo(expected.grossPerPaycheck, 2);
+  expect(parseCurrencyLikeValue(row.benefitsCost)).toBeCloseTo(expected.benefitsCostPerPaycheck, 2);
+  expect(parseCurrencyLikeValue(row.net)).toBeCloseTo(expected.netPerPaycheck, 2);
 });
 
 Then('the existing employee should remain unchanged in the table', async function (this: CustomWorld) {

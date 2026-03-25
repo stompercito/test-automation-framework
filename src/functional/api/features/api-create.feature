@@ -8,6 +8,7 @@ Feature: Employees API Create
     Given I have a valid employee payload
     When I create the employee via API
     Then the employee is created successfully
+    And the created employee payroll should match business rules
 
   Scenario Outline: [API-F-006] Required fields validation
     Given I have an invalid employee payload missing "<field>"
@@ -42,6 +43,7 @@ Feature: Employees API Create
     Given I have a valid employee payload with dependants <dependants>
     When I create the employee via API
     Then the API response should be "<outcome>"
+    And payroll business rules should be respected for dependants outcome "<outcome>"
 
     Examples:
       | dependants | outcome  |

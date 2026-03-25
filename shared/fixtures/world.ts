@@ -1,5 +1,6 @@
-import { setWorldConstructor, World, IWorldOptions } from '@cucumber/cucumber';
+import { setDefaultTimeout, setWorldConstructor, World, IWorldOptions } from '@cucumber/cucumber';
 import { APIRequestContext, Browser, BrowserContext, Page } from '@playwright/test';
+import { config } from '../config/config';
 
 export class CustomWorld extends World {
   browser!: Browser;
@@ -22,3 +23,6 @@ export class CustomWorld extends World {
 }
 
 setWorldConstructor(CustomWorld);
+
+// Ensure Cucumber step timeout is aligned with framework configuration.
+setDefaultTimeout(config.timeouts.navigation);

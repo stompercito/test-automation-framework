@@ -75,7 +75,7 @@ Before({ tags: '@performance' }, async function () {
 });
 
 After({ tags: '@ui' }, async function (this: CustomWorld, scenario) {
-  if (scenario.result?.status === 'FAILED' && this.page) {
+  if (scenario.result?.status === 'FAILED' && this.page && !this.page.isClosed()) {
     const screenshot = await this.page.screenshot({ fullPage: true });
     await this.attach(screenshot, 'image/png');
   }
@@ -86,9 +86,25 @@ After({ tags: '@ui' }, async function (this: CustomWorld, scenario) {
 });
 
 After(async function (this: CustomWorld) {
-  if (this.apiContext && this.createdEmployeeIds.length > 0) {
+  if (this.apiContext) {
     const employeesClient = new EmployeesClient(this.apiContext);
-    for (const id of this.createdEmployeeIds) {
+    const idsToDelete = new Set<string>(this.createdEmployeeIds);
+
+    // Global cleanup: keep scenarios isolated by removing any remaining employees.
+    try {
+      const allEmployeesResponse = await employeesClient.getAll();
+      if (allEmployeesResponse.status === 200 && Array.isArray(allEmployeesResponse.body)) {
+        for (const employee of allEmployeesResponse.body) {
+          if (employee?.id) {
+            idsToDelete.add(employee.id);
+          }
+        }
+      }
+    } catch {
+      // Best-effort cleanup only.
+    }
+
+    for (const id of idsToDelete) {
       try {
         await employeesClient.deleteById(id);
       } catch {

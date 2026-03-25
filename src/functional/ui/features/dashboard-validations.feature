@@ -12,7 +12,19 @@ Feature: Dashboard Data Validations
   @requiresEmployee @seedDependants_2
   Scenario: [UI-F-010] Calculations display correctly for known dependants
     Given I am authenticated on the benefits dashboard
-    Then payroll columns should match business rules for that employee
+    Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+
+  Scenario Outline: [UI-F-019] Payroll calculations are correct for accepted dependants limits
+    Given I am authenticated on the benefits dashboard
+    And an employee exists with dependants <dependants> via API
+    Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+
+    Examples:
+      | dependants |
+      | 0          |
+      | 1          |
+      | 31         |
+      | 32         |
 
   @requiresEmployee @seedFirst_Alpha @seedLast_Zulu
   Scenario: [UI-F-011] Header/value mapping for first and last name

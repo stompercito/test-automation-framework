@@ -63,12 +63,10 @@ jobs:
           PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
           PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
-          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
-          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:bdd:ui
+        run: npm run test:ui
 
       - name: Upload UI Cucumber report
         if: always()
@@ -115,12 +113,10 @@ jobs:
           PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
           PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
-          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
-          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:bdd:api
+        run: npm run test:api
 
       - name: Upload API Cucumber report
         if: always()
@@ -168,8 +164,6 @@ jobs:
           PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
           PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
-          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
-          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
@@ -219,12 +213,10 @@ jobs:
           PAYLOCITY_USERNAME: ${{ secrets.PAYLOCITY_USERNAME }}
           PAYLOCITY_PASSWORD: ${{ secrets.PAYLOCITY_PASSWORD }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
-          API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
-          API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
           HEADLESS: 'true'
           PW_VIDEO_MODE: 'retain-on-failure'
           CI: true
-        run: npm run test:bdd:performance
+        run: npx cucumber-js --config cucumber.config.js --profile performance
 
       - name: Upload performance Cucumber report
         if: always()

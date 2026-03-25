@@ -49,7 +49,7 @@ A scalable, maintainable, and BDD-driven test automation framework built on **Pl
 |  +------------------+  +---------------------------------+  |
 |                                                              |
 |  +------------------------------------------------------+    |
-|  |             Reports (HTML dashboard + Allure)        |    |
+|  |        Reports (Cucumber HTML dashboard)             |    |
 |  +------------------------------------------------------+    |
 +--------------------------------------------------------------+
 ```
@@ -106,7 +106,6 @@ test-automation-framework/
 +-- reports/                     # Generated reports (git-ignored)
 |   +-- html/
 |   +-- csv/
-|   +-- allure-results/
 +-- playwright.config.ts         # Playwright multi-project config
 +-- cucumber.config.js           # Cucumber / BDD config
 +-- tsconfig.json
@@ -150,56 +149,27 @@ Primary execution is Cucumber (`.feature` + steps).
 | `npm run test:functional` | Run all functional suites (UI + API) |
 | `npm run test:non-functional` | Run all non-functional suites (Accessibility + Performance) |
 | `npm run test:ui` | Run UI functional suite only |
+| `npm run test:ui:headed` | Run UI functional suite only with visible browser (`HEADLESS=false`) |
 | `npm run test:api` | Run API functional suite only |
+| `npm run test:smoke` | Run only scenarios tagged with `@smoke` |
 | `npm run test:accessibility` | Run accessibility non-functional suite only |
-| `npm run test:performance` | Run performance non-functional suite only |
-| `npm run test:smoke` | Run smoke scenarios only |
-| `npm run test:regression` | Run regression scenarios only |
-| `npm run qa:local` | Local headed functional run via Cucumber (does not open Playwright UI mode) |
+| `npm run qa:local` | Local functional run via Cucumber (default headless behavior) |
 
 ---
 
 ## Reports & Dashboard
 
-### Which one should I open?
+The framework generates a single primary report via Cucumber HTML:
 
-- **Primary QA dashboard:** Open **Allure** (`npm run report:allure`) when you want consolidated reporting and better analysis views.
-- **Quick debug report:** Open **Playwright HTML report** (`npm run report:open`) when you want a fast local look at failures, traces, and media.
-- **Local execution:** Use `npm run qa:local` to run functional Cucumber tests in headed mode for local debugging.
+- Output file: `reports/html/cucumber-report.html`
+- Source: `cucumber.config.js` formatter `html:reports/html/cucumber-report.html`
 
-In short: Allure is the recommended report to share/review results, while Playwright HTML is mainly for local debugging.
+Open it directly after any test run:
 
-### Playwright HTML Report (built-in)
-
-After any test run the HTML report is written to `reports/playwright-html/`. Open it with:
-
-```bash
-npm run report:open
-```
-
-This opens an interactive dashboard showing pass/fail counts, durations, screenshots on failure, video replays, and trace viewer links.
-
-### Allure Report
-
-Allure provides a rich, interactive dashboard with trend charts, categories, and timeline views:
-
-```bash
-# Generate + open
-npm run report:allure
-
-# Or step by step:
-npm run report:allure:generate   # process raw results -> HTML site
-npm run report:allure:open       # open the site in the browser
-```
-
-### Report Type Differences
-
-| Item | What it is | Best use |
-|---|---|---|
-| `reports/allure-results/` | Raw result artifacts produced during test execution | Input data for generating the Allure dashboard |
-| Allure dashboard (`reports/allure-report/`) | Generated, rich HTML analytics dashboard | Main QA reporting and result review |
-| Playwright HTML report (`reports/playwright-html/`) | Built-in Playwright execution report | Quick local debugging |
-| `npm run qa:local` | Headed local Cucumber execution | Local debugging with visible browser run |
+- Windows: `start reports\html\cucumber-report.html`
+- macOS: `open reports/html/cucumber-report.html`
+- Linux: `xdg-open reports/html/cucumber-report.html`
+- npm script (Windows): `npm run report:cucumber:open`
 
 ---
 
@@ -407,11 +377,10 @@ The framework is executed primarily through **Cucumber `.feature` files** for co
 
 Playwright remains the execution engine (browser/API driver), while scenarios and step definitions are the source of truth for test intent.
 
-### 8. Allure + Playwright HTML Reports
+### 8. Cucumber HTML Reports
 
-**ISTQB FL 5.3** requires test progress and results to be communicated effectively. Two report formats are provided:
-- **Playwright HTML report** - detailed per-test traces, screenshots, and timeline.
-- **Allure report** - executive-level dashboard with trend history, categories (broken vs failed), and retry statistics useful for release decisions.
+**ISTQB FL 5.3** requires test progress and results to be communicated effectively. This framework standardises reporting through:
+- **Cucumber HTML report** - scenario/step execution results generated from `.feature` + step definitions.
 
 ### 9. Non-Functional Testing built-in
 

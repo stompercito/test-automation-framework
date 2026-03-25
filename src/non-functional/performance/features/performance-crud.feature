@@ -1,4 +1,4 @@
-@non-functional @performance @smoke @regression
+@non-functional @performance @regression
 Feature: Performance and Stability - Employees API CRUD Flow
   As a QA engineer
   I want a single performance suite for list and CRUD behavior

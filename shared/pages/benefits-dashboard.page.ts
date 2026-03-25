@@ -33,9 +33,30 @@ export class BenefitsDashboardPage extends BasePage {
     await expect(this.addButton).toBeVisible();
   }
 
+  async assertCoreTableHeaders(): Promise<void> {
+    const headers = (await this.readHeaderLabels()).map((header) => header.trim());
+    expect(headers).toEqual([
+      'Id',
+      'Last Name',
+      'First Name',
+      'Dependents',
+      'Salary',
+      'Gross Pay',
+      'Benefits Cost',
+      'Net Pay',
+      'Actions',
+    ]);
+  }
+
   async openAddModal(): Promise<void> {
     await this.click(this.addButton);
-    await expect(this.employeeModal.modal).toBeVisible();
+    try {
+      await this.employeeModal.waitUntilOpen('add');
+    } catch {
+      // Retry once in case click happened before Bootstrap handlers finished binding.
+      await this.click(this.addButton);
+      await this.employeeModal.waitUntilOpen('add');
+    }
   }
 
   async addEmployee(data: EmployeeFormData): Promise<void> {
@@ -47,13 +68,13 @@ export class BenefitsDashboardPage extends BasePage {
   async openEditById(id: string): Promise<void> {
     const row = await this.findRowById(id);
     await row.locator('.fa-edit').click();
-    await expect(this.employeeModal.modal).toBeVisible();
+    await this.employeeModal.waitUntilOpen('edit');
   }
 
   async openDeleteById(id: string): Promise<void> {
     const row = await this.findRowById(id);
     await row.locator('.fa-times').click();
-    await expect(this.deleteModal.modal).toBeVisible();
+    await this.deleteModal.waitUntilOpen();
   }
 
   async readHeaderLabels(): Promise<string[]> {
@@ -105,5 +126,16 @@ export class BenefitsDashboardPage extends BasePage {
       .first();
 
     return row.isVisible();
+  }
+
+  async hasNoEmployeesMessage(): Promise<boolean> {
+    const emptyCell = this.table.locator('tbody tr td[colspan="9"]');
+    const isVisible = await emptyCell.isVisible().catch(() => false);
+    if (!isVisible) {
+      return false;
+    }
+
+    const text = (await emptyCell.textContent())?.trim() ?? '';
+    return text === 'No employees found.';
   }
 }
