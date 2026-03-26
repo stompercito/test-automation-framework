@@ -103,9 +103,12 @@ test-automation-framework/
 |       +-- api-client.ts        # Abstract API client base class
 |       +-- auth.ts              # API auth header helpers
 |       +-- payroll.ts           # Payroll/business-rule helpers
-+-- reports/                     # Generated reports (git-ignored)
++-- dashboard/                   # Local dashboard assets for test cases and bug reports
++-- reports/                     # QA artifacts, generated reports, and synced CSV outputs
 |   +-- html/
 |   +-- csv/
+|   +-- json/
++-- scripts/                     # Helper scripts for test runs, CSV sync, and dashboard launch
 +-- playwright.config.ts         # Playwright multi-project config
 +-- cucumber.config.js           # Cucumber / BDD config
 +-- tsconfig.json
@@ -122,17 +125,24 @@ test-automation-framework/
 git clone https://github.com/stompercito/test-automation-framework.git
 cd test-automation-framework
 
-# 2. Install dependencies
+# 2. Switch to the working branch
+git switch paylocity
+
+# 3. Install dependencies
 npm install
 
-# 3. Install Playwright browsers
+# 4. Install Playwright browsers
 npx playwright install
 
-# 4. Copy and edit environment variables
+# 5. Copy and edit environment variables
+# Windows (PowerShell)
+Copy-Item .env.example .env
+
+# macOS / Linux
 cp .env.example .env
 # Edit .env with your BASE_URL, credentials, etc.
 
-# 5. Run all tests
+# 6. Run all tests, generate the JSON report, sync the CSV catalog, and open the dashboard
 npm test
 ```
 
@@ -157,12 +167,20 @@ BDD was chosen so test scenarios can be written in business-readable language (`
 | `npm run test:accessibility` | Run accessibility non-functional suite only |
 | `npm run test:accessibility:headed` | Run accessibility suite with visible browser (`HEADLESS=false`) |
 | `npm run test:performance` | Run performance non-functional suite only |
-| `npm run report:test-cases:sync` | Manually sync `paylocity-test-cases.csv` from the last JSON report |
+| `npm run report:test-cases:sync` | Update `paylocity-test-cases.csv` from the existing `reports/json/cucumber-report.json` file without running tests |
 | `npm run report:dashboard:open` | Open the dashboard with the latest results without running tests |
 
-`npm test` is the recommended way to run the full suite. After all scenarios finish it:
-1. Writes the latest result (`PASS` / `FAIL`) into the `last_execution` column of `reports/csv/paylocity-test-cases.csv`.
-2. Launches the **custom dashboard** in your default browser so you can immediately review test-case status and any logged bug reports.
+`npm test` is the recommended way to run the full suite because it uses `scripts/run-cucumber-and-sync-csv.cjs` to keep reports and the test-case catalog aligned. After all scenarios finish it:
+1. Writes a machine-readable JSON report to `reports/json/cucumber-report.json`.
+2. Writes the latest result (`PASS` / `FAIL`) into the `last_execution` column of `reports/csv/paylocity-test-cases.csv`.
+3. Launches the **custom dashboard** in your default browser so you can immediately review test-case status and any logged bug reports.
+
+Use `npm run report:test-cases:sync` only when you need to refresh the CSV from an already-generated JSON report. It does **not** execute Cucumber. In practice that means:
+1. Run `npm test` first, or otherwise make sure `reports/json/cucumber-report.json` already exists and is current.
+2. Keep `reports/csv/paylocity-test-cases.csv` structurally valid; the sync script will fail if rows have broken CSV quoting or missing columns.
+3. Run `npm run report:test-cases:sync` to rewrite only the `last_execution` values for matching `test_case_id` rows.
+
+If you run `npm run test:all` directly, Cucumber still generates the HTML report, but it does **not** trigger the JSON-to-CSV sync flow or open the dashboard automatically.
 
 CSV update rules:
 - Single-scenario test cases are written as the latest timestamp plus `PASS` or `FAIL`
@@ -196,7 +214,7 @@ A detailed step-by-step HTML report is also generated on every run:
 
 - Output file: `reports/html/cucumber-report.html`
 - Source: `cucumber.config.js` formatter `html:reports/html/cucumber-report.html`
-- `npm test` also writes a machine-readable JSON report to `reports/json/cucumber-report.json` so the CSV test-case catalog can be synced automatically
+- `npm test` also writes a machine-readable JSON report to `reports/json/cucumber-report.json` so the CSV test-case catalog can be synced automatically; direct Cucumber scripts such as `npm run test:all` do not
 
 Open it directly after any test run:
 
@@ -222,7 +240,6 @@ Use the following files as the source of QA strategy, coverage, and defect track
 
 - **Test strategy / approach**
   - `paylocity-test-plan.md` (canonical source in repo root)
-  - `reports/paylocity-test-plan.md`
 - **Test cases catalog (CSV)**
   - `reports/csv/paylocity-test-cases.csv`
 - **Data-driven matrices (CSV)**
@@ -330,7 +347,7 @@ All configuration is centralised in `shared/config/config.ts` and driven by envi
 | `API_BASE_URL` | `https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod` | Base URL for API clients and API tests |
 | `PAYLOCITY_USERNAME` | `replace_me` | Primary username used for UI/API authentication |
 | `PAYLOCITY_PASSWORD` | `replace_me` | Primary password used for UI/API authentication |
-| `API_AUTH_TOKEN` | `` | Optional API token auth for API requests |
+| `API_AUTH_TOKEN` | `replace_me` | Optional API token auth for API requests |
 | `ENVIRONMENT` | `staging` | Optional environment label: `local` / `staging` / `production` |
 | `HEADLESS` | `true` | Runs browser headlessly unless set to `false` |
 | `SLOW_MO` | `0` | Milliseconds between Playwright actions |
