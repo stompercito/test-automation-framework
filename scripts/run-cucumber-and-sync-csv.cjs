@@ -12,6 +12,21 @@ function resolveCucumberBinPath() {
   return path.resolve(path.dirname(cucumberPackageJsonPath), 'bin', 'cucumber.js');
 }
 
+function openDashboardInBackground() {
+  if (String(process.env.CI || '').toLowerCase() === 'true') {
+    return;
+  }
+
+  const launcherPath = path.resolve(__dirname, 'open-custom-dashboard.cjs');
+  const child = spawn(process.execPath, [launcherPath], {
+    cwd: path.resolve(__dirname, '..'),
+    detached: true,
+    stdio: 'ignore',
+  });
+
+  child.unref();
+}
+
 async function main() {
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   if (fs.existsSync(reportPath)) {
@@ -70,6 +85,14 @@ async function main() {
       if (finalExitCode === 0) {
         finalExitCode = 1;
       }
+    }
+
+    try {
+      openDashboardInBackground();
+    } catch (error) {
+      console.error(
+        `Failed to launch the custom dashboard: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
 
     process.exit(finalExitCode);

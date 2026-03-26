@@ -146,7 +146,8 @@ BDD was chosen so test scenarios can be written in business-readable language (`
 
 | Command | Description |
 |---|---|
-| `npm test` | Run all suites (functional + non-functional) |
+| `npm test` | Run all suites, sync the test-case CSV, **and open the dashboard automatically** |
+| `npm run test:all` | Run all suites directly via Cucumber (no CSV sync or dashboard) |
 | `npm run test:functional` | Run all functional suites (UI + API) |
 | `npm run test:non-functional` | Run all non-functional suites (Accessibility + Performance) |
 | `npm run test:ui` | Run UI functional suite only |
@@ -156,18 +157,42 @@ BDD was chosen so test scenarios can be written in business-readable language (`
 | `npm run test:accessibility` | Run accessibility non-functional suite only |
 | `npm run test:accessibility:headed` | Run accessibility suite with visible browser (`HEADLESS=false`) |
 | `npm run test:performance` | Run performance non-functional suite only |
+| `npm run report:test-cases:sync` | Manually sync `paylocity-test-cases.csv` from the last JSON report |
+| `npm run report:dashboard:open` | Open the dashboard with the latest results without running tests |
 
-`npm test` also updates `reports/csv/paylocity-test-cases.csv` after execution by writing the latest automated result into the `last_execution` column.
+`npm test` is the recommended way to run the full suite. After all scenarios finish it:
+1. Writes the latest result (`PASS` / `FAIL`) into the `last_execution` column of `reports/csv/paylocity-test-cases.csv`.
+2. Launches the **custom dashboard** in your default browser so you can immediately review test-case status and any logged bug reports.
 
+CSV update rules:
 - Single-scenario test cases are written as the latest timestamp plus `PASS` or `FAIL`
 - Scenario outlines / repeated automated executions are written with example-style entries such as `#1.1 PASS | #1.2 FAIL`
 - Rows for test cases that were not part of the latest automated execution remain untouched, which keeps manual-only or not-run rows intact
+
+> **CI note:** the dashboard is not opened automatically when the `CI` environment variable is set to `true`.
 
 ---
 
 ## Reports & Dashboard
 
-The framework generates a single primary report via Cucumber HTML:
+### Custom Dashboard (recommended)
+
+The custom dashboard is the primary way to review results after a run. It has two tabs:
+
+- **Test Cases** — scenario-level pass/fail status, synced from `reports/csv/paylocity-test-cases.csv`
+- **Bug Reports** — logged defects from `reports/csv/paylocity-bug-report.csv`
+
+`npm test` opens the dashboard **automatically** once the run finishes (except on CI). To open it at any time with the results from the last run:
+
+```bash
+npm run report:dashboard:open
+```
+
+The dashboard is served locally and opens in your default browser. No internet connection is required.
+
+### Cucumber HTML Report
+
+A detailed step-by-step HTML report is also generated on every run:
 
 - Output file: `reports/html/cucumber-report.html`
 - Source: `cucumber.config.js` formatter `html:reports/html/cucumber-report.html`
@@ -175,10 +200,19 @@ The framework generates a single primary report via Cucumber HTML:
 
 Open it directly after any test run:
 
-- Windows: `start reports\html\cucumber-report.html`
-- macOS: `open reports/html/cucumber-report.html`
-- Linux: `xdg-open reports/html/cucumber-report.html`
-- npm script (Windows): `npm run report:cucumber:open`
+```bash
+# Windows
+start reports\html\cucumber-report.html
+
+# macOS
+open reports/html/cucumber-report.html
+
+# Linux
+xdg-open reports/html/cucumber-report.html
+
+# npm script (Windows)
+npm run report:cucumber:open
+```
 
 ---
 

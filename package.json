@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node scripts/run-cucumber-and-sync-csv.cjs --profile all",
+    "test:all": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js --profile all",
     "test:functional": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js",
     "test:non-functional": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js --profile nonfunctional",
     "test:api": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js --profile api",
@@ -15,7 +16,8 @@
     "test:performance": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js --profile performance",
     "test:smoke": "cross-env NO_COLOR=1 FORCE_COLOR=0 npx cucumber-js --config cucumber.config.js --tags \"@smoke\"",
     "report:cucumber:open": "start reports\\html\\cucumber-report.html",
-    "report:test-cases:sync": "node scripts/update-test-case-csv.cjs"
+    "report:test-cases:sync": "node scripts/update-test-case-csv.cjs",
+    "report:dashboard:open": "node scripts/open-custom-dashboard.cjs"
   },
   "repository": {
     "type": "git",

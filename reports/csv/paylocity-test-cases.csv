@@ -15,83 +15,83 @@ And the dashboard should remain in a valid state
 When I delete the existing employee and confirm
 Then the employee should not be visible in the table by id
 And the table should show no employees message
-And the dashboard should remain in a valid state","The main happy path flow succeeds end to end for add, edit, and delete features, including payroll calculations and final empty state validation.",Smoke should stay simple and fast. Covers the primary user journey only.,2026-03-25 23:09:16 | PASS
+And the dashboard should remain in a valid state","The main happy path flow succeeds end to end for add, edit, and delete features, including payroll calculations and final empty state validation.",Smoke should stay simple and fast. Covers the primary user journey only.,2026-03-26 00:51:52 | PASS
 SMK-A-001,"E2E happy path covers create, read, update, and delete employee operations",Functional,API,Automatable,High,Use Case / Smoke / E2E,No,,Valid API authentication is available.,"Examples: create POST /api/Employees (200), read GET /api/Employees/{id} (200), update PUT /api/Employees (200), delete DELETE /api/Employees/{id} (200/204).","Given API smoke prerequisites are ready for ""<operation>""
 When I execute API smoke operation ""<operation>""
 Then API smoke operation ""<operation>"" should return ""<expectedStatus>""
 And API smoke payroll should follow business rules for ""<operation>""
-And I attach API smoke trace for operation ""<operation>"" using ""<method>"" on ""<endpoint>""",Each CRUD smoke operation returns the expected status; payroll business rules are validated for create/read/update; request/response trace is attached.,Smoke should validate the primary API journey quickly without replacing detailed negative coverage.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
+And I attach API smoke trace for operation ""<operation>"" using ""<method>"" on ""<endpoint>""",Each CRUD smoke operation returns the expected status; payroll business rules are validated for create/read/update; request/response trace is attached.,Smoke should validate the primary API journey quickly without replacing detailed negative coverage.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
 UI-F-001,Dashboard loads and employee table is visible,Functional,UI,Automatable,High,Use Case / Functional Baseline,No,,Valid login/session is available.,,"Given I am authenticated and open the Benefits Dashboard
 When the page finishes loading
 Then the employees table should be visible
 And the Add Employee button should be visible
-And the page should be usable without console-blocking errors",Dashboard renders successfully with main controls available.,Moved to detailed/validation coverage after introducing E2E smoke flow.,2026-03-25 23:09:16 | PASS
+And the page should be usable without console-blocking errors",Dashboard renders successfully with main controls available.,Moved to detailed/validation coverage after introducing E2E smoke flow.,2026-03-26 00:51:52 | PASS
 UI-F-002,Add employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Valid login/session is available.,"Generate unique firstName, lastName, username-compatible seed, dependants=1","Given I am authenticated on the benefits dashboard
 When I add a new employee through the UI modal
 Then the new employee should be visible in the employee table
-And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",New employee is created and displayed with correct calculated payroll values.,Cleanup should remove created employee at test end.,2026-03-25 23:09:16 | PASS
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",New employee is created and displayed with correct calculated payroll values.,Cleanup should remove created employee at test end.,2026-03-26 00:51:52 | PASS
 UI-F-003,Edit employee from UI with valid data,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API; update dependants and/or names with unique values,"Given I am authenticated on the benefits dashboard
 When I edit the existing employee through the UI modal
 Then the employee row should show updated values
-And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Employee data is updated and visible in the table with correct recalculated payroll values.,Preferred setup via API hook to keep test focused on edit.,2026-03-25 23:09:16 | PASS
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Employee data is updated and visible in the table with correct recalculated payroll values.,Preferred setup via API hook to keep test focused on edit.,2026-03-26 00:51:52 | PASS
 UI-F-004,Delete a single employee from UI,Functional,UI,Automatable,High,Use Case,No,,Create prerequisite employee by API hook before opening the dashboard.,Employee seeded by API,"Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Delete for that employee
 And I confirm the deletion
-Then the employee should be removed from the table",Employee record is deleted and no longer shown in the table.,Simple delete validation and good smoke component. Delete itself acts as cleanup.,2026-03-25 23:09:16 | PASS
+Then the employee should be removed from the table",Employee record is deleted and no longer shown in the table.,Simple delete validation and good smoke component. Delete itself acts as cleanup.,2026-03-26 00:51:52 | PASS
 UI-F-005,Cancel delete does not remove employee,Functional,UI,Automatable,Medium,Use Case,No,,Create prerequisite employee by API hook.,Employee seeded by API,"Given an employee exists in the system
 When I open Delete for that employee
 And I cancel the delete modal
-Then the employee should remain in the table",Employee is not deleted when delete is cancelled.,Cleanup should delete employee after validation.,2026-03-25 23:09:16 | PASS
+Then the employee should remain in the table",Employee is not deleted when delete is cancelled.,Cleanup should delete employee after validation.,2026-03-26 00:51:52 | PASS
 UI-F-006,Cancel add or edit does not persist changes,Functional,UI,Automatable,Medium,Use Case,No,,"For edit path, create prerequisite employee by API hook.",Unique values for attempted add/edit,"Given I am on the Benefits Dashboard
 When I open Add Employee or Edit Employee
 And I enter modified data
 And I cancel the modal
 Then no new employee should be created
-And no existing employee should be changed",Cancel dismisses modal without persisting changes.,Can be split into separate tests later if desired.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS
+And no existing employee should be changed",Cancel dismisses modal without persisting changes.,Can be split into separate tests later if desired.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS
 UI-F-007,Add vs Update buttons toggle correctly in employee modal,Functional,UI,Automatable,Medium,State Transition,No,,Create prerequisite employee by API hook for edit path.,,"Given I am on the Benefits Dashboard
 When I open Add Employee
 Then the Add button should be visible
 And the Update button should be hidden
 When I open Edit for an existing employee
 Then the Update button should be visible
-And the Add button should be hidden",Modal shows the correct action button for the current mode.,Based on current UI behavior.,2026-03-25 23:09:16 | PASS
+And the Add button should be hidden",Modal shows the correct action button for the current mode.,Based on current UI behavior.,2026-03-26 00:51:52 | PASS
 UI-F-008,Add Employee modal opens with empty input fields,Functional,UI,Automatable,High,State Transition / Error Guessing,No,,Valid session.,,"Given I previously interacted with employee data in the UI
 When I open Add Employee
 Then the id field should be empty
 And first name should be empty
 And last name should be empty
-And dependants should be empty",The Add Employee modal opens in a clean state with blank inputs for a new employee.,Important to avoid stale data being carried over from a previous add or edit action.,2026-03-25 23:09:16 | PASS
+And dependants should be empty",The Add Employee modal opens in a clean state with blank inputs for a new employee.,Important to avoid stale data being carried over from a previous add or edit action.,2026-03-26 00:51:52 | PASS
 UI-F-009,Empty state is shown when no employees exist,Functional,UI,Hybrid,Low,State Validation,No,,Environment or test setup must ensure no employee records are present for the tenant under test.,,"Given there are no employees in the system
 When I open the Benefits Dashboard
-Then the table should show the empty-state message",No employees found message is displayed.,May need controlled environment; can be fragile in shared envs or add a clean-up api hook to remove all employees first.,
+Then the table should show the empty-state message",No employees found message is displayed.,May need controlled environment; can be fragile in shared envs or add a clean-up api hook to remove all employees first.,2026-03-26 00:51:52 | FAIL
 UI-F-010,Displayed calculations are correct for a known employee record,Functional,UI,Automatable,High,Decision Table / Business Rule,No,,Create employee by API hook with controlled dependants count.,"Dataset by dependants count, e.g. 0, 1, 2, 32","Given an employee exists with a known dependants value
 When I open the Benefits Dashboard
-Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Calculated values match expected payroll and benefits calculations.,Best implemented as data-driven by dependants count.,2026-03-25 23:09:16 | PASS
+Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Calculated values match expected payroll and benefits calculations.,Best implemented as data-driven by dependants count.,2026-03-26 00:51:52 | PASS
 UI-F-011,Table headers map to the correct employee values,Functional,UI,Automatable,High,Error Guessing / Data Mapping,No,,Create employee with clearly distinguishable first and last names by API hook.,"Example: firstName='Alpha', lastName='Zulu'","Given an employee exists with distinct first and last names
 When I open the Benefits Dashboard
 Then the value under First Name should be the employee first name
-And the value under Last Name should be the employee last name",Column labels and data mapping are correct.,Important to detect potential UI header-to-cell mapping defects.,2026-03-25 23:09:16 | FAIL
+And the value under Last Name should be the employee last name",Column labels and data mapping are correct.,Important to detect potential UI header-to-cell mapping defects.,2026-03-26 00:51:52 | FAIL
 UI-F-012,Add employee modal handles invalid dependants without broken submit flow or persisted data,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Valid session.,"Dataset: negative dependants, above-max dependants, decimal dependants, text dependants, blank dependants, and spaces-only dependants.","Given I am on the Benefits Dashboard
 When I open Add Employee
 And I enter valid employee data except for an invalid dependants value
 And I submit the form
 Then the employee should not be created
 And the modal should complete a clear validation outcome instead of getting stuck
-And no new employee should appear in the table",Invalid dependants values must be handled without persisting a new employee and without leaving the submit flow in a broken or stuck modal state.,"Automated assertions should verify failed creation, no persisted record, and that the modal does not remain stuck after save is pressed.",2026-03-25 23:09:16 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL | #1.7 FAIL
+And no new employee should appear in the table",Invalid dependants values must be handled without persisting a new employee and without leaving the submit flow in a broken or stuck modal state.,"Automated assertions should verify failed creation, no persisted record, and that the modal does not remain stuck after save is pressed.",2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL | #1.7 FAIL
 UI-F-013,UI validation for missing required employee fields,Functional,UI,Hybrid,High,Equivalence Partitioning,Yes,DDT-UI-REQ-FIELDS,Valid session.,"Dataset: missing firstName, missing lastName, all visible fields empty including dependants blank","Given I am on the Benefits Dashboard
 When I attempt to save an employee with missing required data
-Then the system should block save or present a failure consistently","Required field handling is consistent and does not create invalid records. For the all-fields-empty case, if the modal stays open and the submit flow times out, that should be treated as a test failure signal rather than a successful save.",Use dataset variations for blank or partially completed employee records. Include observation that dependants blank currently may leave the UI without visible feedback.,
+Then the system should block save or present a failure consistently","Required field handling is consistent and does not create invalid records. For the all-fields-empty case, if the modal stays open and the submit flow times out, that should be treated as a test failure signal rather than a successful save.",Use dataset variations for blank or partially completed employee records. Include observation that dependants blank currently may leave the UI without visible feedback.,2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL
 UI-F-014,"Table refreshes after add, edit, and delete actions",Functional,UI,Automatable,Medium,State Transition,No,,Create prerequisite employee for edit/delete portions via API hook as needed.,Unique employee data,"Given I perform add, edit, or delete through the UI
 When each action completes successfully
-Then the table should refresh and show the latest state",Table reflects the latest record state after each CRUD action.,Can become 3 separate tests later.,2026-03-25 23:09:16 | PASS
+Then the table should refresh and show the latest state",Table reflects the latest record state after each CRUD action.,Can become 3 separate tests later.,2026-03-26 00:51:52 | PASS
 UI-F-015,Edit modal shows the selected employee data correctly,Functional,UI,Automatable,High,State Transition,No,,Create prerequisite employee by API hook before opening the dashboard.,"Employee seeded by API with known firstName, lastName, and dependants values.","Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Edit for that employee
 Then the modal should show the correct id
 And the first name should match the selected employee
 And the last name should match the selected employee
-And the dependants value should match the selected employee",Edit opens with the exact data for the selected employee and is ready for update.,Important because the same modal is reused and row-to-column mapping may be incorrect.,2026-03-25 23:09:16 | PASS
+And the dependants value should match the selected employee",Edit opens with the exact data for the selected employee and is ready for update.,Important because the same modal is reused and row-to-column mapping may be incorrect.,2026-03-26 00:51:52 | PASS
 UI-F-016,Edit modal rejects invalid dependants values and does not save the changes,Functional,UI,Automatable,High,BVA / Equivalence Partitioning,Yes,DDT-UI-DEPENDANTS-INVALID,Create prerequisite employee by API hook before opening the dashboard.,"Dataset: negative dependants, above-max dependants, decimal dependants, text dependants, blank dependants, and spaces-only dependants.","Given an employee exists in the system
 And I am on the Benefits Dashboard
 When I open Edit for that employee
@@ -99,27 +99,27 @@ And I replace dependants with an invalid value
 And I submit the form
 Then the employee should not be updated with the invalid value
 And the modal should not complete as a successful save
-And the previously persisted employee data should remain unchanged",Invalid dependants values are rejected during edit and no invalid update is saved. Blank or negative dependants may manifest as a stuck modal or submit timeout instead of a clean inline validation.,"Automated assertions should verify failed update and unchanged persisted data. For blank or negative dependants, treat a blocked save or modal timeout as a valid failure signal and log it as a UI issue.",
+And the previously persisted employee data should remain unchanged",Invalid dependants values are rejected during edit and no invalid update is saved. Blank or negative dependants may manifest as a stuck modal or submit timeout instead of a clean inline validation.,"Automated assertions should verify failed update and unchanged persisted data. For blank or negative dependants, treat a blocked save or modal timeout as a valid failure signal and log it as a UI issue.",2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS | #1.6 PASS
 UI-F-017,UI shows visible feedback when save fails due to invalid data,Functional,UI,Hybrid,High,Error Guessing / UX Validation,Yes,,Valid session. Use invalid create or edit datasets that the API rejects.,Dataset may reuse invalid dependants values and other invalid form combinations.,"Given I am on the Benefits Dashboard
 When I try to save employee data that the API rejects
 Then the UI should show a visible and understandable error message
-And the user should not be left with a silent failure state",Users receive clear feedback when save fails instead of seeing no action and no explanation.,"Hybrid because the presence of an error container can be automated, but message clarity and UX quality benefit from human review.",
+And the user should not be left with a silent failure state",Users receive clear feedback when save fails instead of seeing no action and no explanation.,"Hybrid because the presence of an error container can be automated, but message clarity and UX quality benefit from human review.",2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL
 UI-F-018,Delete flow remains correct when multiple employees are present,Functional,UI,Automatable,Medium,Use Case / State Validation,No,,Create multiple prerequisite employees by API hook before opening the dashboard.,At least two or three seeded employees with distinct names for easy identification.,"Given multiple employees exist in the system
 And I am on the Benefits Dashboard
 When I delete one selected employee from the table
 Then only the selected employee should be removed
 And the remaining employees should still be present
-And the table should remain consistent after the deletion",Delete works correctly in a realistic multi-record scenario without affecting other rows.,More complete delete coverage than the single-record smoke path.,
+And the table should remain consistent after the deletion",Delete works correctly in a realistic multi-record scenario without affecting other rows.,More complete delete coverage than the single-record smoke path.,2026-03-26 00:51:52 | PASS
 UI-F-019,Payroll calculations are correct for accepted dependants limits,Functional,UI,Automatable,High,Boundary Value Analysis / Business Rule,Yes,DDT-UI-DEPENDANTS-VALID,Valid login/session is available and employee can be seeded by API hook.,"Accepted dependants dataset: 0, 1, 31, 32","Given I am authenticated on the benefits dashboard
 And an employee exists with dependants <dependants> via API
-Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee","For accepted dependants limits, displayed payroll columns match expected business-rule values.",Focuses on valid boundary values where calculation must be correct.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
+Then payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee","For accepted dependants limits, displayed payroll columns match expected business-rule values.",Focuses on valid boundary values where calculation must be correct.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
 UI-F-020,Add employee modal handles invalid firstName or lastName values without broken submit flow or persisted data,Functional,UI,Automatable,High,Equivalence Partitioning / Error Guessing,Yes,DDT-UI-NAME-INVALID,Valid session.,"Dataset: numeric-only names, blank names, spaces-only names, selected mixed alphanumeric names, and names over 50 characters.","Given I am on the Benefits Dashboard
 When I open Add Employee
 And I enter employee data using an invalid firstName or lastName variation
 And I submit the form
 Then the employee should not be created and the submit flow should not break
 And invalid name values should not appear as accepted visible employee names in the table
-And firstName and lastName values should not appear under the wrong headers","Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries must be handled without persisting bad data or leaving the modal in a broken submit state. Visible table mapping must still keep firstName under First Name and lastName under Last Name.",Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.,2026-03-25 23:09:16 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL | #1.7 FAIL | #1.8 FAIL | #1.9 FAIL | #1.10 FAIL | #1.11 FAIL | #1.12 FAIL | #1.13 FAIL | #1.14 FAIL
+And firstName and lastName values should not appear under the wrong headers","Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries must be handled without persisting bad data or leaving the modal in a broken submit state. Visible table mapping must still keep firstName under First Name and lastName under Last Name.",Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.,2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL | #1.7 FAIL | #1.8 FAIL | #1.9 FAIL | #1.10 FAIL | #1.11 FAIL | #1.12 FAIL | #1.13 FAIL | #1.14 FAIL
 UI-F-021,Add employee modal accepts valid boundary values and persists them correctly,Functional,UI,Automatable,High,Boundary Value Analysis,Yes,DDT-UI-ADD-VALID-BOUNDARIES,Valid session.,"Dataset: minimum valid names with minimum dependants, maximum valid names with maximum dependants, and representative valid edge combinations.","Given I am on the Benefits Dashboard
 When I open Add Employee
 And I enter employee data using a valid boundary variation
@@ -127,94 +127,94 @@ And I submit the form
 Then the employee should be created successfully
 And firstName and lastName should be visible under the correct headers
 And dependants should be saved with the expected boundary value
-And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Valid boundary inputs in the add modal are accepted and persisted correctly without swapping name columns or miscomputing payroll.,Use readable dataset names in automation output instead of raw generated values so edge-case failures are easy to understand.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
+And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee",Valid boundary inputs in the add modal are accepted and persisted correctly without swapping name columns or miscomputing payroll.,Use readable dataset names in automation output instead of raw generated values so edge-case failures are easy to understand.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
 API-F-001,Create employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Valid Authorization header is available.,"Unique payload with valid firstName, lastName, username, dependants","Given I have a valid employee payload
 When I create the employee via API
 Then the employee is created successfully
-And the created employee payroll should match business rules",API creates employee successfully and returns payroll values matching business rules.,Cleanup should delete created employee.,2026-03-25 23:09:16 | PASS
+And the created employee payroll should match business rules",API creates employee successfully and returns payroll values matching business rules.,Cleanup should delete created employee.,2026-03-26 00:51:52 | PASS
 API-F-002,Get all employees returns a valid list,Functional,API,Automatable,High,Use Case / Functional Baseline,No,,Valid Authorization header is available.,,"Given a valid Authorization header
 When I send a GET request for all employees
 Then the API should return a successful response
-And the response body should be a list of employees",Employee list endpoint is reachable and returns the expected collection shape.,Detailed functional coverage after introducing API E2E smoke flow.,2026-03-25 23:09:16 | PASS
+And the response body should be a list of employees",Employee list endpoint is reachable and returns the expected collection shape.,Detailed functional coverage after introducing API E2E smoke flow.,2026-03-26 00:51:52 | PASS
 API-F-003,Get employee by valid id,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id,"Given an employee exists via API
 When I request employee by id
 Then the employee by id response should match seeded employee
-And the employee by id payroll should match business rules",GET by id returns the correct employee and payroll values matching business rules.,Cleanup should delete employee after test.,2026-03-25 23:09:16 | PASS
+And the employee by id payroll should match business rules",GET by id returns the correct employee and payroll values matching business rules.,Cleanup should delete employee after test.,2026-03-26 00:51:52 | PASS
 API-F-004,Update employee with valid payload,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id plus updated valid values,"Given an employee exists via API
 When I update the seeded employee with valid data
 Then updated employee data should be persisted
-And updated employee payroll should match business rules",API updates employee and persists new values with correct recalculated payroll fields.,Cleanup should delete employee after test.,2026-03-25 23:09:16 | PASS
+And updated employee payroll should match business rules",API updates employee and persists new values with correct recalculated payroll fields.,Cleanup should delete employee after test.,2026-03-26 00:51:52 | PASS
 API-F-005,Delete employee by valid id,Functional,API,Automatable,High,Use Case,No,,Create employee by API as test data setup.,Seeded employee id,"Given an employee exists
 When I send a DELETE request using that employee id
 Then the employee should be deleted successfully
-And a follow-up read should confirm the record is no longer available",Employee is deleted and cannot be retrieved afterward.,Delete is the cleanup.,2026-03-25 23:09:16 | FAIL
+And a follow-up read should confirm the record is no longer available",Employee is deleted and cannot be retrieved afterward.,Delete is the cleanup.,2026-03-26 00:51:52 | FAIL
 API-F-006,Required field validation on create/update,Functional,API,Automatable,High,Equivalence Partitioning,Yes,DDT-API-REQ-FIELDS,Valid Authorization header is available.,"Dataset: missing firstName, missing lastName, missing username, missing multiple required fields","Given a valid Authorization header
 When I submit a create or update request with a required-field dataset variation
-Then the API should reject invalid payloads consistently",Missing required fields are not accepted.,Use required-field datasets instead of duplicating separate missing-field tests.,2026-03-25 23:09:16 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 FAIL
+Then the API should reject invalid payloads consistently",Missing required fields are not accepted.,Use required-field datasets instead of duplicating separate missing-field tests.,2026-03-26 00:51:52 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 FAIL
 API-F-007,String length boundary validation for firstName lastName and username,Functional,API,Automatable,High,Boundary Value Analysis,Yes,DDT-API-STRING-LEN,Valid Authorization header is available.,"Dataset lengths: 0, 1, 49, 50, 51 for each field","Given a valid Authorization header
 When I submit payloads using boundary-length dataset variations
-Then the API should accept valid lengths and reject invalid lengths consistently",Field length constraints are enforced correctly.,Strong data-driven candidate.,2026-03-25 23:09:16 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS | #1.6 PASS | #1.7 PASS | #1.8 PASS | #1.9 PASS | #1.10 FAIL
+Then the API should accept valid lengths and reject invalid lengths consistently",Field length constraints are enforced correctly.,Strong data-driven candidate.,2026-03-26 00:51:52 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS | #1.6 PASS | #1.7 PASS | #1.8 PASS | #1.9 PASS | #1.10 FAIL
 API-F-008,Dependants boundary validation,Functional,API,Automatable,High,Boundary Value Analysis,Yes,DDT-API-DEPENDANTS,Valid Authorization header is available.,"Dataset: -1, 0, 1, 31, 32, 33","Given a valid Authorization header
 When I submit employee payloads with dependants boundary dataset values
-Then the API should accept values within range and reject values outside range consistently",Dependants range validation behaves as documented.,Use boundary datasets for dependants values instead of creating separate near-limit tests.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS | #1.6 PASS
+Then the API should accept values within range and reject values outside range consistently",Dependants range validation behaves as documented.,Use boundary datasets for dependants values instead of creating separate near-limit tests.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS | #1.6 PASS
 API-F-009,Invalid UUID handling for get and delete by id,Functional,API,Automatable,Medium,Equivalence Partitioning,Yes,DDT-API-INVALID-UUID,Valid Authorization header is available.,"Dataset: malformed uuid, empty id, non-existent but valid uuid","Given a valid Authorization header
 When I request get or delete using an invalid id dataset variation
-Then the API should fail gracefully and consistently",Invalid id requests are handled predictably without incorrect success.,Can also cover not-found behavior separately if needed.,2026-03-25 23:09:16 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL
+Then the API should fail gracefully and consistently",Invalid id requests are handled predictably without incorrect success.,Can also cover not-found behavior separately if needed.,2026-03-26 00:51:52 | FAIL | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 FAIL | #1.5 FAIL | #1.6 FAIL
 API-F-010,Read-only fields cannot be client-controlled,Functional,API,Automatable,High,Error Guessing / Contract Validation,Yes,DDT-API-READONLY,Valid Authorization header is available.,"Payloads attempting to set partitionKey, sortKey, gross, benefitsCost, net","Given a valid Authorization header
 When I submit payloads that attempt to control read-only fields
-Then the API should ignore or reject those values consistently",Read-only fields are not writable by the client.,Important contract integrity check.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS
+Then the API should ignore or reject those values consistently",Read-only fields are not writable by the client.,Important contract integrity check.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS | #1.5 PASS
 API-F-011,Unexpected properties are rejected when additionalProperties is false,Functional,API,Automatable,High,Error Guessing / Contract Validation,Yes,DDT-API-EXTRA-PROPS,Valid Authorization header is available.,Payload with extra property such as middleName or unknownFlag,"Given a valid Authorization header
 When I submit a payload with an undefined property
-Then the API should reject the payload consistently",Unexpected fields are not silently accepted.,Validates strict schema behavior.,2026-03-25 23:09:16 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL
+Then the API should reject the payload consistently",Unexpected fields are not silently accepted.,Validates strict schema behavior.,2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL
 API-F-012,Expiration field rejects invalid date-time format,Functional,API,Automatable,Medium,Equivalence Partitioning,Yes,DDT-API-EXPIRATION,Valid Authorization header is available.,"Dataset: valid ISO date-time, invalid text, invalid date, empty string","Given a valid Authorization header
 When I submit payloads with expiration dataset variations
-Then the API should accept valid date-time values and reject invalid ones consistently",Expiration field format is validated correctly.,Only applicable if expiration is supported in requests for this tenant/implementation.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
+Then the API should accept valid date-time values and reject invalid ones consistently",Expiration field format is validated correctly.,Only applicable if expiration is supported in requests for this tenant/implementation.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
 API-F-013,Authentication is required for employee endpoints,Functional,API,Automatable,High,Negative Testing,Yes,DDT-API-AUTH,,"Dataset: no Authorization header, malformed header, invalid token","Given I call an employee endpoint without valid authentication
 When I submit the request
-Then the API should reject the request",Unauthorized access is not allowed.,Apply to representative endpoints if not all.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
+Then the API should reject the request",Unauthorized access is not allowed.,Apply to representative endpoints if not all.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS | #1.3 PASS | #1.4 PASS
 API-F-014,End-to-end CRUD chain remains consistent,Functional,API,Automatable,High,State Transition,No,,Valid Authorization header is available.,Unique valid payload,"Given a valid Authorization header
 When I create an employee
 And I retrieve the employee
 And I update the employee
 And I retrieve the employee again
 And I delete the employee
-Then each operation should reflect the correct current state",CRUD chain is internally consistent across API operations.,Strong regression anchor.,2026-03-25 23:09:16 | FAIL
+Then each operation should reflect the correct current state",CRUD chain is internally consistent across API operations.,Strong regression anchor.,2026-03-26 00:51:52 | FAIL
 API-F-015,API rejects invalid firstName or lastName values or exposes them as defects if accepted,Functional,API,Automatable,High,Equivalence Partitioning / Error Guessing,Yes,DDT-API-NAME-INVALID,Valid Authorization header is available.,"Dataset: numeric-only names, blank names, spaces-only names, selected mixed alphanumeric names, and names over 50 characters.","Given a valid Authorization header
 When I submit employee payloads using invalid name variations
 Then the API should reject invalid name values consistently or the test should flag accepted invalid names as defects
-And firstName and lastName should remain mapped to the correct response properties","Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries are rejected or clearly detected as defects if the API accepts them. Response mapping must keep firstName and lastName in the correct properties.",Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.,
+And firstName and lastName should remain mapped to the correct response properties","Invalid name values such as numeric-only, blank, spaces-only, or longer-than-50-character entries are rejected or clearly detected as defects if the API accepts them. Response mapping must keep firstName and lastName in the correct properties.",Use readable dataset names in automation output instead of raw numeric strings so failures are easier to understand.,2026-03-26 00:51:52 | FAIL | #1.1 FAIL | #1.2 FAIL | #1.3 FAIL | #1.4 PASS | #1.5 PASS | #1.6 PASS | #1.7 PASS | #1.8 PASS | #1.9 PASS | #1.10 FAIL | #1.11 FAIL | #1.12 PASS | #1.13 PASS | #1.14 PASS
 PERF-NF-001,Get employees endpoint responds within acceptable threshold,Non-Functional,Performance,Automatable,Medium,Performance Smoke,No,,Valid Authorization header is available.,,"Given a valid Authorization header
 When I request the employee list
-Then the response time should remain within the agreed smoke threshold",Endpoint performance is acceptable for smoke validation.,Threshold can be set by project convention.,2026-03-25 23:09:16 | PASS
+Then the response time should remain within the agreed smoke threshold",Endpoint performance is acceptable for smoke validation.,Threshold can be set by project convention.,2026-03-26 00:51:52 | PASS
 PERF-NF-002,Create update and delete operations respond within acceptable threshold,Non-Functional,Performance,Automatable,Medium,Performance Smoke,No,,Valid Authorization header is available.,Unique valid payload,"Given valid employee payload data
 When I create update and delete an employee through the API
-Then each operation should complete within the agreed smoke threshold",CRUD endpoints meet basic performance expectations.,Can capture timings per operation.,2026-03-25 23:09:16 | PASS
+Then each operation should complete within the agreed smoke threshold",CRUD endpoints meet basic performance expectations.,Can capture timings per operation.,2026-03-26 00:51:52 | PASS
 PERF-NF-003,Repeated CRUD operations remain stable,Non-Functional,Performance,Automatable,Low,Stability,Yes,DDT-PERF-CRUD-REPEAT,Valid Authorization header is available.,"Iteration counts such as 5, 10, 20","Given valid employee payload data
 When I repeat CRUD operations for a defined iteration dataset
-Then the API should remain stable without unexpected failures",Basic repeated usage does not introduce instability.,Keep challenge scope lightweight.,2026-03-25 23:09:16 | PASS | #1.1 PASS | #1.2 PASS
+Then the API should remain stable without unexpected failures",Basic repeated usage does not introduce instability.,Keep challenge scope lightweight.,2026-03-26 00:51:52 | PASS | #1.1 PASS | #1.2 PASS
 ACC-NF-001,Add employee action is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Valid session.,,"Given I am authenticated on the benefits dashboard
 When I reset keyboard focus to the dashboard
-Then the add employee action should be reachable by keyboard",Add action can be reached using keyboard-only navigation.,Automated keyboard path check.,2026-03-25 23:09:16 | PASS
+Then the add employee action should be reachable by keyboard",Add action can be reached using keyboard-only navigation.,Automated keyboard path check.,2026-03-26 00:51:52 | PASS
 ACC-NF-002,Edit action for seeded employee is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Seeded employee prerequisite is available.,Seed one employee by API hook,"Given I am authenticated on the benefits dashboard
 When I reset keyboard focus to the dashboard
-Then the edit action for the seeded employee should be reachable by keyboard",Edit action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.,2026-03-25 23:09:16 | FAIL
+Then the edit action for the seeded employee should be reachable by keyboard",Edit action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.,2026-03-26 00:51:52 | FAIL
 ACC-NF-003,Delete action for seeded employee is reachable by keyboard,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Keyboard Navigation,No,,Seeded employee prerequisite is available.,Seed one employee by API hook,"Given I am authenticated on the benefits dashboard
 When I reset keyboard focus to the dashboard
-Then the delete action for the seeded employee should be reachable by keyboard",Delete action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.,2026-03-25 23:09:16 | FAIL
+Then the delete action for the seeded employee should be reachable by keyboard",Delete action for an existing row can be reached using keyboard-only navigation.,Automated keyboard path check with seeded row prerequisite.,2026-03-26 00:51:52 | FAIL
 ACC-NF-004,Employee add modal accessibility happy path,Non-Functional,Accessibility,Hybrid,Medium,Accessibility / Focus Management,No,,Valid session.,,"Given I am authenticated on the benefits dashboard
 When I open add employee modal from dashboard
 Then add and cancel buttons should be visible in the employee modal
 And keyboard navigation should reach employee modal inputs and action buttons
-And employee modal inputs should have non-empty placeholders","Add modal accessibility checks validate modal actions, keyboard reachability, and placeholder presence without extending into employee creation flow.",Focused on modal accessibility behavior only so failures stop at the relevant UI state.,2026-03-25 23:09:16 | FAIL
+And employee modal inputs should have non-empty placeholders","Add modal accessibility checks validate modal actions, keyboard reachability, and placeholder presence without extending into employee creation flow.",Focused on modal accessibility behavior only so failures stop at the relevant UI state.,2026-03-26 00:51:52 | FAIL
 ACC-NF-005,Labels buttons and icon actions are understandable,Non-Functional,Accessibility,Manual,Medium,Accessibility / UX Review,No,,Valid session.,,"Given I review the dashboard and employee table
 When I inspect labels, buttons, and icon-only actions
-Then controls should be understandable and not rely on ambiguous visual cues",Users can identify actions without confusion.,Manual because clarity and ambiguity require human judgment.,
+Then controls should be understandable and not rely on ambiguous visual cues",Users can identify actions without confusion.,Manual because clarity and ambiguity require human judgment.,2026-03-26 00:53:08 | PARTIAL | Dashboard review
 UX-NF-001,Employee table remains usable on practical viewport sizes,Non-Functional,UX-Responsive,Manual,High,Responsive Review,Yes,DDT-UX-VIEWPORTS,Dashboard contains at least one record with normal-length values.,"Viewport dataset: 320x640, 768x1024, 1280x800, 1440x900","Given I open the Benefits Dashboard at different viewport sizes
 When I review the employee table and actions
-Then the table should remain readable and usable without severe layout breakage",Table layout remains practical across targeted viewport sizes.,Manual because visual fit and usability are best judged by a human.,
+Then the table should remain readable and usable without severe layout breakage",Table layout remains practical across targeted viewport sizes.,Manual because visual fit and usability are best judged by a human.,FAIL
 UX-NF-002,Long values do not cause severe overflow or truncation issues,Non-Functional,UX-Responsive,Manual,Medium,Visual Review,Yes,DDT-UX-LONG-VALUES,Create employee data with long names and realistic ids.,Dataset with long first/last names and normal/long visible values,"Given the table contains records with long visible values
 When I review the dashboard layout
-Then content should not create severe clipping overlap or unusable truncation",Long values do not break layout beyond acceptable limits.,Manual visual check.,
+Then content should not create severe clipping overlap or unusable truncation",Long values do not break layout beyond acceptable limits.,Manual visual check.,FAIL
 UX-NF-003,Modal remains readable and usable under zoom,Non-Functional,UX-Responsive,Manual,Low,Visual Review,Yes,DDT-UX-ZOOM,Valid session.,"Zoom dataset: 100%, 125%, 150%, 200%","Given I open the employee or delete modal
 When I review it at different zoom levels
-Then labels fields and actions should remain readable and usable",Modal remains practical under zoom changes.,Manual because readability and usability need human review.,
+Then labels fields and actions should remain readable and usable",Modal remains practical under zoom changes.,Manual because readability and usability need human review.,PASS

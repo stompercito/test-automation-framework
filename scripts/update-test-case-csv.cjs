@@ -318,4 +318,6 @@ if (require.main === module) {
 module.exports = {
   updateCsvFromCucumberReport,
   formatTimestamp,
+  parseCsv,
+  stringifyCsv,
 };

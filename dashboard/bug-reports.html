@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paylocity QA Dashboard - Bug Reports</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <p class="eyebrow">Paylocity QA Dashboard</p>
+          <h1>Bug reports with context</h1>
+          <p>Live view of <span class="mono">reports/csv/paylocity-bug-report.csv</span>, grouped into a cleaner investigator-friendly workspace.</p>
+        </div>
+        <div class="link-row hero-actions">
+          <a class="link-pill" href="/test-cases">Go to test cases</a>
+          <button class="ghost-button" type="button" onclick="window.location.reload()">Refresh data</button>
+        </div>
+      </div>
+      <div id="summaryGrid" class="summary-grid"></div>
+    </section>
+
+    <section class="workspace">
+      <article class="panel">
+        <div class="panel-header">
+          <h2>Defect inventory</h2>
+          <div class="panel-tools">
+            <input id="searchInput" class="search-input" type="search" placeholder="Search by bug id, title, module or source tests">
+            <select id="severityFilter" class="filter-select">
+              <option value="">All severities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Bug ID</th>
+                <th>Title</th>
+                <th>Area</th>
+                <th>Module / Endpoint</th>
+                <th>Priority</th>
+                <th>Severity</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="detail-card">
+        <div>
+          <p class="eyebrow">Selected bug</p>
+          <h2 id="detailTitle">Loading...</h2>
+        </div>
+        <div id="detailMeta" class="detail-meta"></div>
+        <div id="detailGrid" class="detail-grid"></div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/assets/common.js"></script>
+  <script src="/assets/bug-reports.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paylocity QA Dashboard - Test Cases</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <p class="eyebrow">Paylocity QA Dashboard</p>
+          <h1>Test cases</h1>
+          <p>Live view of <span class="mono">reports/csv/paylocity-test-cases.csv</span>. Hybrid and manual rows can be reviewed directly from here without touching automated results.</p>
+        </div>
+        <div class="link-row hero-actions">
+          <a class="link-pill" href="/bug-reports">Go to bug reports</a>
+          <button class="ghost-button" type="button" onclick="window.location.reload()">Refresh data</button>
+        </div>
+      </div>
+      <div id="summaryGrid" class="summary-grid"></div>
+    </section>
+
+    <section class="workspace">
+      <article class="panel">
+        <div class="panel-header">
+          <h2>Execution matrix</h2>
+          <div class="panel-tools">
+            <input id="searchInput" class="search-input" type="search" placeholder="Search by id, title, notes or result">
+            <select id="classificationFilter" class="filter-select">
+              <option value="">All classifications</option>
+              <option value="Automatable">Automatable</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Manual">Manual</option>
+            </select>
+            <select id="statusFilter" class="filter-select">
+              <option value="">All statuses</option>
+              <option value="PASS">PASS</option>
+              <option value="FAIL">FAIL</option>
+              <option value="PARTIAL">PARTIAL</option>
+              <option value="BLOCKED">BLOCKED</option>
+              <option value="NOT_RUN">NOT_RUN</option>
+              <option value="BLANK">BLANK</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Classification</th>
+                <th>Priority</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Manual Review</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="detail-card">
+        <div>
+          <p class="eyebrow">Selected test case</p>
+          <h2 id="detailTitle">Loading...</h2>
+        </div>
+        <div id="detailMeta" class="detail-meta"></div>
+        <div id="detailGrid" class="detail-grid"></div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/assets/common.js"></script>
+  <script src="/assets/test-cases.js"></script>
+</body>
+</html>
