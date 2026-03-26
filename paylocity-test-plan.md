@@ -213,8 +213,10 @@ Boundary and invalid-input checks must be validated directly in UI modals (Creat
 These scenarios must verify:
 - operation is not completed
 - record is not created or not updated
-- modal does not close as if the action succeeded
+- modal behavior is intentional and completes a clear validation flow
 - visible user feedback exists when an error occurs
+
+A blocked submit action or a modal that appears frozen after pressing save must be treated as a defect, not as an acceptable negative-path outcome.
 
 ### Silent failure risk note
 Add an explicit UI risk category for **silent failures**:
@@ -223,6 +225,11 @@ Add an explicit UI risk category for **silent failures**:
 - user perceives that "nothing happened"
 
 This must be treated as a UX/UI and error-handling defect class and included in planned negative coverage.
+
+Examples of this defect class include:
+- save button click appears to do nothing
+- modal remains open without actionable feedback
+- invalid input is rejected by the API but the UI leaves the user in a broken state
 
 ## 8. API Coverage Notes
 Documented endpoints:

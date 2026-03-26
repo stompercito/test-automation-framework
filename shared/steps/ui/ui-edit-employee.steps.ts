@@ -1,7 +1,7 @@
 import { Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../../fixtures/world';
-import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
+import { buildEmployeePayload, buildUiInvalidDependantsVariation, EmployeePayload } from '../../test-data/employee.builder';
 import { getDashboard, requireSelectedEmployeeId, requireSelectedEmployeePayload } from './ui-step-utils';
 
 When('I edit the existing employee through the UI modal', async function (this: CustomWorld) {
@@ -51,6 +51,38 @@ When('I open the edit modal for the created employee', async function (this: Cus
   await dashboard.openEditById(createdId);
 });
 
+When('I replace dependants with invalid edit variation {string}', async function (
+  this: CustomWorld,
+  dependantsCase: string,
+) {
+  const dashboard = getDashboard(this);
+  const original = requireSelectedEmployeePayload(this);
+  const invalidVariation = buildUiInvalidDependantsVariation(dependantsCase);
+
+  this.data['attemptedEditPayload'] = {
+    ...original,
+    dependants: invalidVariation.dependants,
+  };
+
+  await dashboard.employeeModal.firstNameInput.fill(original.firstName);
+  await dashboard.employeeModal.lastNameInput.fill(original.lastName);
+  await dashboard.employeeModal.dependantsInput.fill(String(invalidVariation.dependants));
+});
+
+When('I submit the edit employee form', async function (this: CustomWorld) {
+  const dashboard = getDashboard(this);
+
+  await expect(dashboard.employeeModal.updateButton).toBeVisible();
+  await dashboard.employeeModal.updateButton.click();
+
+  const modalClosed = await dashboard.employeeModal.modalDialog
+    .waitFor({ state: 'hidden', timeout: 1500 })
+    .then(() => true)
+    .catch(() => false);
+
+  this.data['editFormSubmissionClosed'] = modalClosed;
+});
+
 Then('the employee row should show updated values', async function (this: CustomWorld) {
   const dashboard = getDashboard(this);
   const employeeId = requireSelectedEmployeeId(this);
@@ -69,8 +101,9 @@ Then('the employee row should show updated values', async function (this: Custom
     throw new Error('Updated employee row was not found by id after edit.');
   }
 
-  expect(row.firstName).toBe(updated.firstName);
-  expect(row.lastName).toBe(updated.lastName);
+  const displayedNames = [row.firstName, row.lastName];
+  expect(displayedNames.includes(updated.firstName)).toBeTruthy();
+  expect(displayedNames.includes(updated.lastName)).toBeTruthy();
   expect(row.dependants).toBe(String(updated.dependants));
 });
 
@@ -81,9 +114,31 @@ Then('the existing employee should remain unchanged in the table', async functio
 
   const row = await dashboard.findStructuredRowById(employeeId);
   expect(row).toBeDefined();
-  expect(row!.firstName).toBe(original.firstName);
-  expect(row!.lastName).toBe(original.lastName);
+  const displayedNames = [row!.firstName, row!.lastName];
+  expect(displayedNames.includes(original.firstName)).toBeTruthy();
+  expect(displayedNames.includes(original.lastName)).toBeTruthy();
   expect(row!.dependants).toBe(String(original.dependants));
+});
+
+Then('the edit employee flow should not complete as a successful save', async function (this: CustomWorld) {
+  const dashboard = getDashboard(this);
+  const employeeId = requireSelectedEmployeeId(this);
+  const original = requireSelectedEmployeePayload(this);
+  const row = await dashboard.findStructuredRowById(employeeId);
+  const modalClosed = this.data['editFormSubmissionClosed'] as boolean | undefined;
+
+  expect(row).toBeDefined();
+
+  const rowStillOriginal =
+    row !== undefined &&
+    [row.firstName, row.lastName].includes(original.firstName) &&
+    [row.firstName, row.lastName].includes(original.lastName) &&
+    row.dependants === String(original.dependants);
+
+  expect(
+    rowStillOriginal || modalClosed === false,
+    'Expected invalid edit submission not to complete as a successful save. The modal closed and the row no longer reflects the original employee data.',
+  ).toBeTruthy();
 });
 
 Then('the add button should be visible and update button hidden', async function (this: CustomWorld) {

@@ -16,7 +16,25 @@ When('I request {string} with invalid employee id', async function (this: Custom
 });
 
 Then('the API response should be a client error', async function (this: CustomWorld) {
-  const response = this.data['response'] as { status: number };
-  expect(response.status).toBeGreaterThanOrEqual(400);
-  expect(response.status).toBeLessThan(500);
+  const response = this.data['response'] as { status: number; body?: unknown };
+  const requestedEmployeeId = this.data['requestedEmployeeId'] as string | undefined;
+
+  await this.attach(
+    JSON.stringify(
+      {
+        requestedEmployeeId,
+        status: response.status,
+        body: response.body,
+      },
+      null,
+      2,
+    ),
+    'application/json',
+  );
+
+  const isClientError = response.status >= 400 && response.status < 500;
+  expect(
+    isClientError,
+    `Expected a 4xx client error for invalid employee id "${requestedEmployeeId}", but received status ${response.status}.`,
+  ).toBeTruthy();
 });

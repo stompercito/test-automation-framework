@@ -7,7 +7,8 @@ Feature: Employees API Delete
   Scenario: [API-F-005] Delete employee by valid id
     Given an employee exists via API
     When I delete the seeded employee by id
-    Then the deleted employee should no longer be retrievable
+    And I request employee by id
+    Then the API response should be a client error
 
   Scenario Outline: [API-F-009] Invalid UUID handling for delete
     Given I use invalid employee id "<invalidId>"
@@ -15,5 +16,7 @@ Feature: Employees API Delete
     Then the API response should be a client error
 
     Examples:
-      | invalidId  |
-      | not-a-uuid |
+      | invalidId                           |
+      | not-a-uuid                          |
+      | 12345                               |
+      | 12345678-1234-1234-1234-12345678901 |

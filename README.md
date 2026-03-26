@@ -140,7 +140,9 @@ npm test
 
 ## Running Tests
 
-Primary execution is Cucumber (`.feature` + steps).
+Primary execution is **Cucumber**, which acts as the test runner for this framework by executing `.feature` files and matching them to step definitions in `shared/steps/**`.
+
+BDD was chosen so test scenarios can be written in business-readable language (`Given / When / Then`), making the suite easier to review with non-developers, map to acceptance criteria, and maintain as living documentation.
 
 | Command | Description |
 |---|---|
@@ -155,6 +157,12 @@ Primary execution is Cucumber (`.feature` + steps).
 | `npm run test:accessibility:headed` | Run accessibility suite with visible browser (`HEADLESS=false`) |
 | `npm run test:performance` | Run performance non-functional suite only |
 
+`npm test` also updates `reports/csv/paylocity-test-cases.csv` after execution by writing the latest automated result into the `last_execution` column.
+
+- Single-scenario test cases are written as the latest timestamp plus `PASS` or `FAIL`
+- Scenario outlines / repeated automated executions are written with example-style entries such as `#1.1 PASS | #1.2 FAIL`
+- Rows for test cases that were not part of the latest automated execution remain untouched, which keeps manual-only or not-run rows intact
+
 ---
 
 ## Reports & Dashboard
@@ -163,6 +171,7 @@ The framework generates a single primary report via Cucumber HTML:
 
 - Output file: `reports/html/cucumber-report.html`
 - Source: `cucumber.config.js` formatter `html:reports/html/cucumber-report.html`
+- `npm test` also writes a machine-readable JSON report to `reports/json/cucumber-report.json` so the CSV test-case catalog can be synced automatically
 
 Open it directly after any test run:
 
@@ -348,6 +357,8 @@ This section justifies every architectural decision with references to the **IST
 - Living documentation: feature files describe what the system does.
 - Traceability: each scenario maps directly to a business requirement.
 - Reduced ambiguity: acceptance criteria are executable tests.
+
+In this framework, Cucumber is the primary test runner, while Playwright is the execution engine used underneath for browser automation, API interactions, and hybrid checks. This separation keeps test intent readable at the feature level while still giving the suite reliable low-level automation capabilities.
 
 ### 4. API Hooks for Test Prerequisites
 

@@ -9,14 +9,12 @@ Feature: Dashboard Smoke
     When I login with configured credentials
     Then I should see the benefits dashboard
     When I add a new employee through the UI modal
-    Then the new employee should be visible in the employee table
-    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+    Then the employee row should appear in the table with the expected values and business-rule calculations
     And the dashboard should remain in a valid state
     When I open the edit modal for the created employee
     Then the edit modal should show the created employee values
     When I edit the existing employee through the UI modal
-    Then the employee row should show updated values
-    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+    Then the employee row should appear in the table with the expected values and business-rule calculations
     And the dashboard should remain in a valid state
     When I delete the existing employee and confirm
     Then the employee should not be visible in the table by id

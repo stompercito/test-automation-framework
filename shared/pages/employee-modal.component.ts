@@ -1,9 +1,10 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { config } from '../config/config';
 
 export type EmployeeFormData = {
   firstName: string;
   lastName: string;
-  dependants: number;
+  dependants: number | string;
 };
 
 export class EmployeeModal {
@@ -15,6 +16,10 @@ export class EmployeeModal {
   readonly dependantsInput: Locator;
   readonly addButton: Locator;
   readonly updateButton: Locator;
+
+  private get interactionTimeout(): number {
+    return Math.min(config.timeouts.default, 5_000);
+  }
 
   constructor(private readonly page: Page) {
     this.modal = page.locator('#employeeModal');
@@ -50,12 +55,13 @@ export class EmployeeModal {
     await this.waitUntilClosed();
   }
 
-  async waitUntilOpen(mode?: 'add' | 'edit'): Promise<void> {
-    await expect(this.modal).toHaveClass(/show/);
-    await this.modalDialog.waitFor({ state: 'visible' });
-    await this.firstNameInput.waitFor({ state: 'visible' });
-    await this.lastNameInput.waitFor({ state: 'visible' });
-    await this.dependantsInput.waitFor({ state: 'visible' });
+  async waitUntilOpen(mode?: 'add' | 'edit', timeout = this.interactionTimeout): Promise<void> {
+
+    await expect(this.modal).toHaveClass(/show/, { timeout });
+    await this.modalDialog.waitFor({ state: 'visible', timeout });
+    await this.firstNameInput.waitFor({ state: 'visible', timeout });
+    await this.lastNameInput.waitFor({ state: 'visible', timeout });
+    await this.dependantsInput.waitFor({ state: 'visible', timeout });
 
     if (mode === 'add') {
       await expect(this.addButton).toBeVisible();
@@ -68,9 +74,9 @@ export class EmployeeModal {
     }
   }
 
-  async waitUntilClosed(): Promise<void> {
-    await expect(this.modal).not.toHaveClass(/show/);
-    await this.modalDialog.waitFor({ state: 'hidden' });
+  async waitUntilClosed(timeout = this.interactionTimeout): Promise<void> {
+    await expect(this.modal).not.toHaveClass(/show/, { timeout });
+    await this.modalDialog.waitFor({ state: 'hidden', timeout });
   }
 
   async isOpen(): Promise<boolean> {

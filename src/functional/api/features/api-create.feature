@@ -89,3 +89,25 @@ Feature: Employees API Create
       | tomorrow             | rejected                |
       | 2026-13-99T99:99:99Z | rejected                |
       | 2026-03-24           | implementation-specific |
+
+  Scenario Outline: [API-F-015] API rejects invalid firstName or lastName values or exposes them as defects if accepted
+    Given I have an employee payload using invalid API name variation "<nameCase>"
+    When I create the employee via API
+    Then invalid API name handling should be enforced or exposed as a defect
+
+    Examples:
+      | nameCase                 |
+      | firstName numeric only   |
+      | lastName numeric only    |
+      | both names numeric only  |
+      | firstName blank          |
+      | lastName blank           |
+      | both names blank         |
+      | firstName spaces only    |
+      | lastName spaces only     |
+      | both names spaces only   |
+      | firstName mixed alphanumeric |
+      | lastName mixed alphanumeric  |
+      | firstName over 50 chars  |
+      | lastName over 50 chars   |
+      | both names over 50 chars |

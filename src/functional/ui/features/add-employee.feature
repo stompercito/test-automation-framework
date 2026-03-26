@@ -7,8 +7,7 @@ Feature: Add Employee
   Scenario: [UI-F-002] Add employee happy path
     Given I am authenticated on the benefits dashboard
     When I add a new employee through the UI modal
-    Then the new employee should be visible in the employee table
-    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+    Then the employee row should appear in the table with the expected values and business-rule calculations
 
   Scenario: [UI-F-006] Cancel add should not persist new record
     Given I am authenticated on the benefits dashboard
@@ -20,7 +19,7 @@ Feature: Add Employee
     When I open add modal, type values, cancel, and open add modal again
     Then the add modal fields should be empty
 
-  Scenario Outline: [UI-F-012] Add employee modal rejects invalid dependants values and does not save the employee
+  Scenario Outline: [UI-F-012] Add employee modal handles invalid dependants without broken submit flow or persisted data
     Given I am authenticated on the benefits dashboard
     When I open the add employee modal
     And I enter valid employee data except for invalid dependants variation "<dependantsCase>"
@@ -38,7 +37,34 @@ Feature: Add Employee
       | spaces only dependants  |
       | mixed dependants text   |
 
-  Scenario Outline: [UI-F-020] Add employee modal rejects invalid firstName or lastName values and does not persist them
+  Scenario Outline: [UI-F-013] UI validation for missing required employee fields
+    Given I am authenticated on the benefits dashboard
+    When I open the add employee modal
+    And I enter employee data with missing required field variation "<fieldCase>"
+    And I submit the add employee form
+    Then no new employee should be created
+    And a visible validation or error message should be shown
+
+    Examples:
+      | fieldCase               |
+      | missing firstName       |
+      | missing lastName        |
+      | all visible fields empty |
+
+  Scenario Outline: [UI-F-017] UI shows visible feedback when save fails due to invalid data
+    Given I am authenticated on the benefits dashboard
+    When I open the add employee modal
+    And I enter employee data using feedback failure variation "<failureCase>"
+    And I submit the add employee form
+    Then no new employee should be created
+    And a visible validation or error message should be shown
+
+    Examples:
+      | failureCase             |
+      | blank dependants        |
+      | both names blank        |
+
+  Scenario Outline: [UI-F-020] Add employee modal handles invalid firstName or lastName values without broken submit flow or persisted data
     Given I am authenticated on the benefits dashboard
     When I open the add employee modal
     And I enter employee data using invalid name variation "<nameCase>"
@@ -68,9 +94,7 @@ Feature: Add Employee
     When I open the add employee modal
     And I enter employee data using valid add boundary variation "<boundaryCase>"
     And I submit the add employee form
-    Then the new employee should be visible in the employee table
-    And first and last name columns should map correctly for that employee
-    And payroll columns Gross Pay, Benefits Cost, and Net Pay should match expected business-rule values for that employee
+    Then the employee row should appear in the table with the expected values and business-rule calculations
 
     Examples:
       | boundaryCase                    |

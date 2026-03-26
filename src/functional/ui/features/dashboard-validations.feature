@@ -9,6 +9,11 @@ Feature: Dashboard Data Validations
     When I login with configured credentials
     Then I should see the benefits dashboard
 
+  Scenario: [UI-F-009] Empty state is shown when no employees exist
+    Given I am authenticated on the benefits dashboard
+    And there are no employees in the system
+    Then the table should show no employees message
+
   @requiresEmployee @seedDependants_2
   Scenario: [UI-F-010] Calculations display correctly for known dependants
     Given I am authenticated on the benefits dashboard

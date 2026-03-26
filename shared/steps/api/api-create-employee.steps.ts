@@ -1,6 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { buildEmployeePayload, EmployeePayload } from '../../test-data/employee.builder';
+import { buildEmployeePayload, buildInvalidNameVariation, EmployeePayload } from '../../test-data/employee.builder';
 import { CustomWorld } from '../../fixtures/world';
 import { calculateCompensation } from '../../utils/payroll';
 import { getClient } from './api-step-utils';
@@ -61,6 +61,14 @@ Given('I have a payload with expiration value {string}', async function (this: C
   this.data['employeePayload'] = payload;
 });
 
+Given('I have an employee payload using invalid API name variation {string}', async function (
+  this: CustomWorld,
+  nameCase: string,
+) {
+  this.data['employeePayload'] = buildInvalidNameVariation(nameCase);
+  this.data['invalidApiNameVariation'] = nameCase;
+});
+
 When('I create the employee via API', async function (this: CustomWorld) {
   const client = getClient(this);
   const payload = this.data['employeePayload'] as EmployeePayload;
@@ -117,6 +125,47 @@ Then('expiration handling outcome should be {string}', async function (this: Cus
   }
 
   expect(response.status).toBeGreaterThanOrEqual(400);
+});
+
+Then('invalid API name handling should be enforced or exposed as a defect', async function (this: CustomWorld) {
+  const response = this.data['response'] as {
+    status: number;
+    body?: { firstName?: string; lastName?: string; id?: string };
+  };
+  const payload = this.data['employeePayload'] as EmployeePayload;
+  const nameCase = (this.data['invalidApiNameVariation'] as string | undefined) ?? 'unknown invalid API name variation';
+
+  await this.attach(
+    JSON.stringify(
+      {
+        nameVariation: nameCase,
+        status: response.status,
+        requestPayload: payload,
+        responseBody: response.body ?? null,
+      },
+      null,
+      2,
+    ),
+    'application/json',
+  );
+
+  if (response.status >= 400) {
+    return;
+  }
+
+  expect(response.status, `Expected invalid API name variation "${nameCase}" to be rejected with a 4xx response.`).toBe(200);
+  expect(
+    response.body?.firstName,
+    `API accepted invalid API name variation "${nameCase}" and also returned a mismapped firstName property.`,
+  ).toBe(payload.firstName);
+  expect(
+    response.body?.lastName,
+    `API accepted invalid API name variation "${nameCase}" and also returned a mismapped lastName property.`,
+  ).toBe(payload.lastName);
+
+  throw new Error(
+    `API accepted invalid API name variation "${nameCase}" with status 200. This is being flagged as a defect.`,
+  );
 });
 
 Then('the created employee payroll should match business rules', async function (this: CustomWorld) {

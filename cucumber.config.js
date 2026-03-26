@@ -19,12 +19,23 @@ const sharedOptions = {
 };
 
 const profiles = {
-  // Default: run all features
+  // Default: run all functional features
   default: {
     ...sharedOptions,
     paths: [
       'src/functional/ui/features/**/*.feature',
       'src/functional/api/features/**/*.feature',
+    ],
+  },
+
+  // Full suite: functional + non-functional features
+  all: {
+    ...sharedOptions,
+    paths: [
+      'src/functional/ui/features/**/*.feature',
+      'src/functional/api/features/**/*.feature',
+      'src/non-functional/performance/features/**/*.feature',
+      'src/non-functional/accessibility/features/**/*.feature',
     ],
   },
 

@@ -9,7 +9,7 @@ export function calculateCompensation(dependants: number) {
   const net = gross - benefitsCost;
 
   return {
-    salaryPerPaycheck: gross,
+    annualSalary: ANNUAL_SALARY,
     grossPerPaycheck: gross,
     benefitsCostPerPaycheck: benefitsCost,
     netPerPaycheck: net,

@@ -91,29 +91,56 @@ export class BenefitsDashboardPage extends BasePage {
     const results: DashboardRow[] = [];
 
     for (let i = 0; i < count; i += 1) {
-      const cells = await rows.nth(i).locator('td').allTextContents();
-      if (cells.length < 8) {
-        continue;
+      const parsed = await this.readStructuredRow(rows.nth(i));
+      if (parsed) {
+        results.push(parsed);
       }
-
-      results.push({
-        id: cells[0].trim(),
-        firstName: cells[1].trim(),
-        lastName: cells[2].trim(),
-        dependants: cells[3].trim(),
-        salary: cells[4].trim(),
-        gross: cells[5].trim(),
-        benefitsCost: cells[6].trim(),
-        net: cells[7].trim(),
-      });
     }
 
     return results;
   }
 
+  async readStructuredRow(row: Locator): Promise<DashboardRow | undefined> {
+    const cells = await row.locator('td').allTextContents();
+    if (cells.length < 8) {
+      return undefined;
+    }
+
+    return {
+      id: cells[0].trim(),
+      lastName: cells[1].trim(),
+      firstName: cells[2].trim(),
+      dependants: cells[3].trim(),
+      salary: cells[4].trim(),
+      gross: cells[5].trim(),
+      benefitsCost: cells[6].trim(),
+      net: cells[7].trim(),
+    };
+  }
+
   async findStructuredRowById(id: string): Promise<DashboardRow | undefined> {
     const rows = await this.readRows();
     return rows.find((row) => row.id === id);
+  }
+
+  async findStructuredRowByFullName(firstName: string, lastName: string): Promise<DashboardRow | undefined> {
+    const rows = await this.readRows();
+    return rows.find((row) => row.firstName === firstName.trim() && row.lastName === lastName.trim());
+  }
+
+  async findStructuredRowContainingNames(firstName: string, lastName: string): Promise<DashboardRow | undefined> {
+    const row = this.table
+      .locator('tbody tr')
+      .filter({ has: this.page.locator('td', { hasText: firstName.trim() }) })
+      .filter({ has: this.page.locator('td', { hasText: lastName.trim() }) })
+      .first();
+
+    const isVisible = await row.isVisible().catch(() => false);
+    if (!isVisible) {
+      return undefined;
+    }
+
+    return this.readStructuredRow(row);
   }
 
   async findRowById(id: string): Promise<Locator> {
